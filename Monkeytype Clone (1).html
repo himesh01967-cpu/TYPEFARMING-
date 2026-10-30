@@ -1,0 +1,3198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TypeFarming</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600&family=Coming+Soon&family=Fira+Code:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;600&family=Inconsolata:wght@400;600&family=Inter+Tight:wght@400;600&family=Itim&family=JetBrains+Mono:wght@400;500;600&family=Kanit:wght@400;600&family=Lalezar&family=Lato:wght@400;700&family=Lexend+Deca:wght@400;600&family=Montserrat:wght@400;600&family=Nunito:wght@400;600&family=Overpass+Mono:wght@400;600&family=Oxygen:wght@400;700&family=Roboto+Mono:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Sarabun:wght@400;600&family=Source+Code+Pro:wght@400;600&family=Space+Grotesk:wght@400;600&family=Titillium+Web:wght@400;600&family=Ubuntu+Mono:wght@400;700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-color: #323437;
+      --sub-alt-color: #2c2e31;
+      --main-color: #e2b714;
+      --text-color: #d1d0c5;
+      --sub-color: #646669;
+      --error-color: #ca4754;
+      --font-family: 'Roboto Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-family);
+      transition: background-color 0.2s ease, color 0.2s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-color);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--sub-color);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--main-color);
+    }
+
+    /* Utility Classes using CSS Variables */
+    .mt-bg { background-color: var(--bg-color); }
+    .mt-sub-alt { background-color: var(--sub-alt-color); }
+    .mt-main-bg { background-color: var(--main-color); color: var(--bg-color); }
+    .mt-text { color: var(--text-color); }
+    .mt-sub { color: var(--sub-color); }
+    .mt-main { color: var(--main-color); }
+    .mt-error-bg { background-color: var(--error-color); color: #ffffff; }
+
+    /* Buttons */
+    .mt-btn {
+      background-color: var(--sub-alt-color);
+      color: var(--sub-color);
+      border-radius: 0.5rem;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.82rem;
+      line-height: 1.2;
+      transition: all 0.12s ease;
+      cursor: pointer;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      border: 2px solid transparent;
+    }
+    .mt-btn:hover {
+      background-color: var(--text-color);
+      color: var(--bg-color);
+    }
+    .mt-btn.active {
+      background-color: var(--main-color);
+      color: var(--bg-color);
+      font-weight: 600;
+    }
+
+    .mt-input {
+      background-color: var(--sub-alt-color);
+      color: var(--text-color);
+      border-radius: 0.5rem;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.85rem;
+      outline: none;
+      border: 2px solid transparent;
+      transition: border-color 0.15s ease;
+    }
+    .mt-input:focus {
+      border-color: var(--main-color);
+    }
+
+    /* Caret Animations & Styles */
+    @keyframes caretBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .caret-blink {
+      animation: caretBlink 1s infinite;
+    }
+    #caret {
+      position: absolute;
+      pointer-events: none;
+      z-index: 10;
+      background-color: var(--main-color);
+    }
+    #caret.style-default {
+      width: 2.5px;
+      border-radius: 2px;
+    }
+    #caret.style-block {
+      width: 0.62em;
+      opacity: 0.55;
+      border-radius: 3px;
+    }
+    #caret.style-outline {
+      width: 0.62em;
+      background-color: transparent !important;
+      border: 2px solid var(--main-color);
+      border-radius: 3px;
+    }
+    #caret.style-underline {
+      width: 0.62em;
+      height: 3px !important;
+      margin-top: 1.35em;
+      border-radius: 2px;
+    }
+
+    /* Range Slider */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      background: var(--sub-alt-color);
+      border-radius: 6px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 14px;
+      border-radius: 6px;
+      background: var(--main-color);
+      cursor: pointer;
+    }
+
+    /* Funbox Visual Effects */
+    .funbox-mirror #wordsWrapper { transform: scaleX(-1); }
+    .funbox-upside_down #wordsWrapper { transform: rotate(180deg); }
+    @keyframes nauseaAnim {
+      0%, 100% { transform: rotate(-1.5deg) translateY(-2px); }
+      50% { transform: rotate(1.5deg) translateY(2px); }
+    }
+    .funbox-nausea #wordsWrapper { animation: nauseaAnim 1.8s infinite ease-in-out; }
+    @keyframes roundAnim {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .funbox-round_round_baby #wordsWrapper { animation: roundAnim 8s infinite linear; }
+    @keyframes quakeAnim {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-2px, 2px); }
+      50% { transform: translate(2px, -2px); }
+      75% { transform: translate(-2px, -1px); }
+    }
+    .funbox-earthquake #wordsWrapper { animation: quakeAnim 0.2s infinite; }
+    .funbox-crt {
+      text-shadow: 0 0 6px var(--main-color);
+    }
+
+    /* Word Styling */
+    .word {
+      display: inline-block;
+      margin-right: 0.65em;
+      margin-bottom: 0.35em;
+      position: relative;
+      line-height: 1.45;
+    }
+    .letter {
+      display: inline-block;
+      color: var(--sub-color);
+      transition: color 0.06s ease;
+      position: relative;
+    }
+    .letter.correct {
+      color: var(--text-color);
+    }
+    .colorful-mode .letter.correct {
+      color: var(--main-color);
+    }
+    .flip-colors .letter {
+      color: var(--text-color);
+    }
+    .flip-colors .letter.correct {
+      color: var(--sub-color);
+    }
+    .letter.incorrect {
+      color: var(--error-color);
+    }
+    .letter.extra {
+      color: var(--error-color);
+      opacity: 0.75;
+    }
+    .word.error-underline {
+      border-bottom: 2px solid var(--error-color);
+    }
+
+    /* Keybind Tag */
+    .kbd-tag {
+      background-color: var(--sub-color);
+      color: var(--bg-color);
+      padding: 0.1rem 0.4rem;
+      border-radius: 0.25rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin: 0 0.15rem;
+    }
+  </style>
+</head>
+<body class="selection:bg-red-500 selection:text-black">
+
+  <!-- 1. TOP PROMOTIONAL MERCH BANNER -->
+  <div id="merchBanner" class="w-full py-1.5 px-4 flex items-center justify-between text-xs sm:text-sm font-medium z-30" style="background-color: var(--main-color); color: #2c2e31;">
+    <div class="flex items-center gap-2">
+      <i class="fa-solid fa-bag-shopping"></i>
+    </div>
+    <div class="text-center truncate px-2">
+      <span>Check out our merch store! </span>
+      <a href="#merch" onclick="event.preventDefault(); showToast('Opening typefarming.store preview...');" class="underline font-bold hover:opacity-80">typefarming.store</a>
+    </div>
+    <button onclick="document.getElementById('merchBanner').style.display='none'" class="hover:opacity-70 p-1" aria-label="Close banner">
+      <i class="fa-solid fa-xmark text-base"></i>
+    </button>
+  </div>
+
+  <!-- 2. MAIN NAVIGATION HEADER -->
+  <header class="w-full max-w-5xl mx-auto px-4 sm:px-6 pt-5 pb-3 flex items-center justify-between">
+    <div class="flex items-center gap-4 sm:gap-6">
+      <!-- Brand Logo -->
+      <button onclick="switchView('test')" class="flex items-center gap-2.5 group focus:outline-none">
+        <div class="w-9 h-7 rounded-md border-2 flex items-center justify-center font-bold text-xs tracking-tighter transition-transform group-hover:scale-105" style="border-color: var(--main-color); color: var(--main-color);">
+          <span class="leading-none">T<span class="underline">F</span></span>
+        </div>
+        <span class="text-xl sm:text-2xl font-bold tracking-tight hidden xs:inline-block" style="color: var(--text-color);">TypeFarming</span>
+      </button>
+
+      <!-- Left Nav Icons -->
+      <nav class="flex items-center gap-4 sm:gap-5 text-base sm:text-lg">
+        <button id="navTestBtn" onclick="switchView('test')" class="transition-colors hover:opacity-100" style="color: var(--main-color);" title="Start Test">
+          <i class="fa-solid fa-keyboard"></i>
+        </button>
+        <button onclick="openModal('leaderboardModal')" class="mt-sub hover:text-[var(--text-color)] transition-colors" title="Leaderboards">
+          <i class="fa-solid fa-crown"></i>
+        </button>
+        <button onclick="openModal('aboutModal')" class="mt-sub hover:text-[var(--text-color)] transition-colors" title="About">
+          <i class="fa-solid fa-info"></i>
+        </button>
+        <button id="navSettingsBtn" onclick="switchView('settings')" class="mt-sub hover:text-[var(--text-color)] transition-colors" title="Settings">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Right Nav Icons -->
+    <div class="flex items-center gap-4 sm:gap-5 text-base sm:text-lg">
+      <button onclick="showToast('No new notifications')" class="mt-sub hover:text-[var(--text-color)] transition-colors relative" title="Notifications">
+        <i class="fa-solid fa-bell"></i>
+      </button>
+      <div class="relative group">
+        <button onclick="showToast('Logged in as guest_typer')" class="mt-sub hover:text-[var(--text-color)] transition-colors" title="Account">
+          <i class="fa-regular fa-user"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 flex flex-col justify-between">
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: TYPING TEST INTERFACE              -->
+    <!-- ========================================== -->
+    <section id="testView" class="flex-1 flex flex-col justify-between py-4">
+      
+      <!-- Top Test Configuration Pill Bar -->
+      <div class="w-full flex justify-center my-2">
+        <div class="mt-sub-alt rounded-lg px-3 py-1.5 flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm">
+          <!-- Modifiers -->
+          <div class="flex items-center gap-2 sm:gap-3">
+            <button id="modPunctuation" onclick="toggleModifier('punctuation')" class="mt-sub hover:text-[var(--text-color)] transition-colors flex items-center gap-1">
+              <span>@</span><span>punctuation</span>
+            </button>
+            <button id="modNumbers" onclick="toggleModifier('numbers')" class="mt-sub hover:text-[var(--text-color)] transition-colors flex items-center gap-1">
+              <span>#</span><span>numbers</span>
+            </button>
+          </div>
+
+          <div class="w-1 h-4 rounded-full opacity-30" style="background-color: var(--bg-color);"></div>
+
+          <!-- Modes -->
+          <div class="flex items-center gap-2 sm:gap-3">
+            <button data-mode="time" onclick="setTestMode('time')" class="mode-btn flex items-center gap-1 font-medium" style="color: var(--main-color);">
+              <i class="fa-solid fa-clock text-[11px]"></i><span>time</span>
+            </button>
+            <button data-mode="words" onclick="setTestMode('words')" class="mode-btn mt-sub hover:text-[var(--text-color)] flex items-center gap-1">
+              <span class="font-bold">A</span><span>words</span>
+            </button>
+            <button data-mode="quote" onclick="setTestMode('quote')" class="mode-btn mt-sub hover:text-[var(--text-color)] flex items-center gap-1">
+              <i class="fa-solid fa-quote-left text-[11px]"></i><span>quote</span>
+            </button>
+            <button data-mode="zen" onclick="setTestMode('zen')" class="mode-btn mt-sub hover:text-[var(--text-color)] flex items-center gap-1">
+              <i class="fa-solid fa-mountain text-[11px]"></i><span>zen</span>
+            </button>
+            <button data-mode="custom" onclick="setTestMode('custom')" class="mode-btn mt-sub hover:text-[var(--text-color)] flex items-center gap-1">
+              <i class="fa-solid fa-wrench text-[11px]"></i><span>custom</span>
+            </button>
+          </div>
+
+          <div id="subConfigDivider" class="w-1 h-4 rounded-full opacity-30" style="background-color: var(--bg-color);"></div>
+
+          <!-- Durations / Word Counts -->
+          <div id="subConfigBar" class="flex items-center gap-2.5 sm:gap-3">
+            <button data-amount="15" onclick="setTestAmount(15)" class="amount-btn mt-sub hover:text-[var(--text-color)]">15</button>
+            <button data-amount="30" onclick="setTestAmount(30)" class="amount-btn font-bold" style="color: var(--main-color);">30</button>
+            <button data-amount="60" onclick="setTestAmount(60)" class="amount-btn mt-sub hover:text-[var(--text-color)]">60</button>
+            <button data-amount="120" onclick="setTestAmount(120)" class="amount-btn mt-sub hover:text-[var(--text-color)]">120</button>
+            <button onclick="promptCustomAmount()" class="mt-sub hover:text-[var(--text-color)]" title="Custom amount">
+              <i class="fa-solid fa-screwdriver-wrench text-[11px]"></i>
+            </button>
+          </div>
+
+          <!-- Custom Mode 'change' Button (Shown when 'custom' mode is active) -->
+          <div id="customChangeBar" class="hidden items-center">
+            <button onclick="openCustomTextModal()" class="mt-sub hover:text-[var(--text-color)] transition-colors">
+              change
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Typing Stage -->
+      <div id="typingStage" class="my-auto py-8 flex flex-col items-center justify-center relative w-full">
+        
+        <!-- Caps Lock Warning -->
+        <div id="capsWarning" class="hidden mb-4 px-4 py-2 rounded-md font-semibold text-xs sm:text-sm items-center gap-2" style="background-color: var(--main-color); color: var(--bg-color);">
+          <i class="fa-solid fa-lock"></i>
+          <span>Caps Lock</span>
+        </div>
+
+        <!-- Language & Funbox Indicator -->
+        <div class="flex items-center gap-4 mb-3 text-xs sm:text-sm mt-sub">
+          <button onclick="openCommandLine('language')" class="hover:text-[var(--text-color)] transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-earth-americas"></i>
+            <span id="currentLangLabel">english</span>
+          </button>
+          <span id="activeFunboxBadge" class="hidden px-2 py-0.5 rounded text-xs font-semibold" style="background-color: var(--sub-alt-color); color: var(--main-color);"></span>
+        </div>
+
+        <!-- Live Telemetry (Timer, WPM, Acc, Burst) -->
+        <div id="liveStatsRow" class="w-full flex items-baseline gap-6 mb-2 text-xl sm:text-2xl font-bold" style="color: var(--main-color);">
+          <div id="liveTimer" class="transition-opacity">30</div>
+          <div id="liveWpm" class="hidden">0 <span class="text-xs font-normal opacity-75">wpm</span></div>
+          <div id="liveAcc" class="hidden">100% <span class="text-xs font-normal opacity-75">acc</span></div>
+          <div id="liveBurst" class="hidden">0 <span class="text-xs font-normal opacity-75">burst</span></div>
+        </div>
+
+        <!-- Live Progress Bar -->
+        <div id="liveProgressBarWrap" class="w-full h-1 rounded-full overflow-hidden mb-3 hidden" style="background-color: var(--sub-alt-color);">
+          <div id="liveProgressBar" class="h-full transition-all duration-200" style="width: 0%; background-color: var(--main-color);"></div>
+        </div>
+
+        <!-- Focus Helper Pill (Visible when input is unfocused) -->
+        <div id="focusHelperPill" onclick="focusTypingInput()" class="mb-2 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-2 cursor-pointer transition-opacity duration-200" style="background-color: var(--sub-alt-color); color: var(--main-color); border: 1px solid rgba(226,183,20,0.3);">
+          <i class="fa-solid fa-keyboard"></i>
+          <span>Tap or press any key to focus &amp; start typing</span>
+        </div>
+
+        <!-- Words Viewport -->
+        <div id="wordsViewport" onclick="focusTypingInput()" class="w-full relative overflow-hidden cursor-text rounded-lg" style="height: 7.2rem; font-size: 1.45rem;">
+          <!-- Persistent Full-Overlay Input for 100% Mobile Virtual Keyboard & Desktop Support -->
+          <input
+            id="typing-input"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            aria-label="Typing Input"
+            style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.01; z-index: 20; cursor: text; background: transparent; color: transparent; border: none; outline: none; caret-color: transparent; font-size: 16px;"
+          />
+
+          <!-- Animated Caret -->
+          <div id="caret" class="style-default caret-blink" style="height: 1.85rem; top: 2px; left: 0px; transition: left 0.08s ease, top 0.08s ease;"></div>
+
+          <!-- Words Container -->
+          <div id="wordsWrapper" class="w-full transition-transform duration-150 ease-out relative select-none pointer-events-none"></div>
+        </div>
+
+        <!-- Restart Test Button -->
+        <div class="mt-6 flex items-center gap-4">
+          <button onclick="restartTest()" class="mt-sub hover:text-[var(--text-color)] transition-transform active:rotate-180 p-2.5 rounded-lg text-lg" title="Restart Test (Tab + Enter)">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+
+        <!-- Reactive Keymap Visual (Optional via Settings) -->
+        <div id="keymapContainer" class="hidden mt-6 flex-col items-center gap-1.5 select-none">
+          <div class="flex gap-1.5" id="keymapRow1"></div>
+          <div class="flex gap-1.5" id="keymapRow2"></div>
+          <div class="flex gap-1.5" id="keymapRow3"></div>
+        </div>
+      </div>
+
+      <!-- Post-Test Results Screen (Hidden during test) -->
+      <div id="resultsStage" class="hidden my-auto py-6 w-full flex-col gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
+          <!-- Primary WPM & Accuracy -->
+          <div class="flex md:flex-col justify-around md:justify-center gap-4">
+            <div>
+              <div class="text-sm sm:text-base mt-sub">wpm</div>
+              <div id="resWpm" class="text-5xl sm:text-6xl font-bold" style="color: var(--main-color);">0</div>
+            </div>
+            <div>
+              <div class="text-sm sm:text-base mt-sub">acc</div>
+              <div id="resAcc" class="text-5xl sm:text-6xl font-bold" style="color: var(--main-color);">100%</div>
+            </div>
+          </div>
+
+          <!-- Performance Graph Canvas -->
+          <div class="md:col-span-3 mt-sub-alt rounded-xl p-4 h-48 relative flex items-center justify-center">
+            <canvas id="resultsChart" class="w-full h-full"></canvas>
+          </div>
+        </div>
+
+        <!-- Secondary Breakdown Row -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 text-center sm:text-left">
+          <div>
+            <div class="text-xs mt-sub">test type</div>
+            <div id="resType" class="text-base font-semibold" style="color: var(--main-color);">time 30<br>english</div>
+          </div>
+          <div>
+            <div class="text-xs mt-sub">raw</div>
+            <div id="resRaw" class="text-2xl font-bold" style="color: var(--main-color);">0</div>
+          </div>
+          <div>
+            <div class="text-xs mt-sub">characters</div>
+            <div id="resChars" class="text-xl font-bold" style="color: var(--text-color);">0/0/0/0</div>
+          </div>
+          <div>
+            <div class="text-xs mt-sub">consistency</div>
+            <div id="resConsistency" class="text-2xl font-bold" style="color: var(--main-color);">100%</div>
+          </div>
+          <div>
+            <div class="text-xs mt-sub">time</div>
+            <div id="resTime" class="text-2xl font-bold" style="color: var(--main-color);">30s</div>
+          </div>
+          <div class="flex items-center justify-center sm:justify-end gap-3">
+            <button onclick="restartTest()" class="mt-btn active px-5 py-3 text-sm" title="Next Test">
+              <i class="fa-solid fa-chevron-right"></i>
+              <span>next test</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="h-4"></div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: EXHAUSTIVE SETTINGS VIEW           -->
+    <!-- ========================================== -->
+    <section id="settingsView" class="hidden flex-col gap-6 py-4 w-full">
+
+      <!-- Quick Category Navigation Card (Matches image 2138 & 2139) -->
+      <div class="mt-sub-alt rounded-xl py-6 px-4 flex flex-col items-center gap-4 text-sm sm:text-base shadow-sm">
+        <a href="#sec-behavior" class="mt-sub hover:text-[var(--text-color)] transition-colors flex items-center gap-2.5">
+          <i class="fa-solid fa-screwdriver-wrench text-xs"></i><span>behavior</span>
+        </a>
+        <a href="#sec-input" class="mt-sub hover:text-[var(--text-color)] transition-colors flex items-center gap-2.5">
+          <i class="fa-solid fa-keyboard text-xs"></i><span>input</span>
+        </a>
+        <a href="#sec-sound" class="mt-sub hover:text-[var(--text-color)] transition-colors flex items-center gap-2.5">
+          <i class="fa-solid fa-volume-high text-xs"></i><span>sound</span>
+        </a>
+        <a href="#sec-caret" class="mt-sub hover:text-[var(--text-color)] transition-colors flex items-center gap-2.5">
+          <i class="fa-solid fa-i-cursor text-xs"></i><span>caret</span>
+        </a>
+        <a href="#sec-appearance" class="mt-sub hover:text-[var(--text-color)] transition-colors flex items-center gap-2.5">
+          <i class="fa-solid fa-palette text-xs"></i><span>appearance</span>
+        </a>
+        <a href="#sec-theme" class="mt-sub hover:text-[var(--text-color)] transition-colors flex items-center gap-2.5">
+          <i class="fa-solid fa-paint-roller text-xs"></i><span>theme</span>
+        </a>
+        <a href="#sec-hide" class="mt-sub hover:text-[var(--text-color)] transition-colors flex items-center gap-2.5">
+          <i class="fa-solid fa-eye-slash text-xs"></i><span>hide elements</span>
+        </a>
+        <a href="#sec-danger" class="mt-sub hover:text-[var(--text-color)] transition-colors flex items-center gap-2.5">
+          <i class="fa-solid fa-triangle-exclamation text-xs"></i><span>danger zone</span>
+        </a>
+      </div>
+
+      <!-- Command Line Helper Tip -->
+      <div class="text-center text-xs sm:text-sm mt-sub leading-relaxed px-2">
+        tip: You can also change all these settings quickly using the command line<br>
+        ( <button onclick="openCommandLine()" class="kbd-tag">escape</button> or <button onclick="openCommandLine()" class="kbd-tag">ctrl + shift + p</button> )
+      </div>
+
+      <!-- Account Settings Moved Card -->
+      <div class="mt-sub-alt rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-white/5">
+        <div class="flex items-center gap-4">
+          <i class="fa-solid fa-user-gear text-3xl mt-sub shrink-0"></i>
+          <p class="text-xs sm:text-sm leading-relaxed" style="color: var(--text-color);">
+            Account settings have moved. You can now access them by hovering over the account button in the top right corner, then clicking "Account settings".
+          </p>
+        </div>
+        <button onclick="showToast('Opening Account Settings...')" class="w-full sm:w-auto shrink-0 mt-btn py-2.5 px-4 text-xs sm:text-sm" style="background-color: var(--bg-color); color: var(--text-color);">
+          go to account settings
+        </button>
+      </div>
+
+      <!-- Search Settings Input -->
+      <div class="relative w-full">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-xs mt-sub"></i>
+        <input
+          id="settingsSearchInput"
+          type="text"
+          oninput="filterSettingsOnPage(this.value)"
+          placeholder="search settings"
+          class="w-full mt-input pl-9 py-2.5 text-sm"
+        />
+      </div>
+
+      <!-- ALL 8 ACCORDION SECTIONS CONTAINER -->
+      <div id="settingsSectionsContainer" class="flex flex-col gap-10 pb-8"></div>
+
+      <!-- Bottom Account Settings Reminder Card (Matches image 2152) -->
+      <div class="mt-sub-alt rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-white/5">
+        <div class="flex items-center gap-4">
+          <i class="fa-solid fa-user-gear text-2xl mt-sub shrink-0"></i>
+          <p class="text-xs leading-relaxed" style="color: var(--text-color);">
+            Account settings have moved. You can now access them by hovering over the account button in the top right corner, then clicking "Account settings".
+          </p>
+        </div>
+        <button onclick="showToast('Opening Account Settings...')" class="w-full sm:w-auto shrink-0 mt-btn py-2 px-4 text-xs" style="background-color: var(--bg-color); color: var(--text-color);">
+          go to account settings
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- 5. GLOBAL FOOTER -->
+  <footer class="w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 text-xs mt-sub flex flex-col gap-4">
+    <!-- Key Tips -->
+    <div id="footerKeyTips" class="flex flex-col items-center justify-center gap-1.5 text-[11px]">
+      <div><span class="kbd-tag">tab</span> + <span class="kbd-tag">enter</span> - restart test</div>
+      <div><span class="kbd-tag">escape</span> or <span class="kbd-tag">ctrl</span> + <span class="kbd-tag">shift</span> + <span class="kbd-tag">p</span> - command line</div>
+    </div>
+
+    <!-- Links & Version Row -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2">
+        <a href="#contact" onclick="event.preventDefault(); showToast('Contact modal')" class="hover:text-[var(--text-color)] flex items-center gap-1.5"><i class="fa-solid fa-envelope"></i><span>contact</span></a>
+        <a href="#support" onclick="event.preventDefault(); showToast('Support typefarming')" class="hover:text-[var(--text-color)] flex items-center gap-1.5"><i class="fa-solid fa-coins"></i><span>support</span></a>
+        <a href="#github" onclick="event.preventDefault(); showToast('GitHub repository')" class="hover:text-[var(--text-color)] flex items-center gap-1.5"><i class="fa-solid fa-code"></i><span>github</span></a>
+        <a href="#discord" onclick="event.preventDefault(); showToast('Discord community')" class="hover:text-[var(--text-color)] flex items-center gap-1.5"><i class="fa-brands fa-discord"></i><span>discord</span></a>
+        <a href="#twitter" onclick="event.preventDefault(); showToast('Twitter / X')" class="hover:text-[var(--text-color)] flex items-center gap-1.5"><i class="fa-brands fa-twitter"></i><span>twitter</span></a>
+        <a href="#terms" onclick="event.preventDefault(); showToast('Terms of Service')" class="hover:text-[var(--text-color)] flex items-center gap-1.5"><i class="fa-solid fa-file-lines"></i><span>terms</span></a>
+        <a href="#security" onclick="event.preventDefault(); showToast('Security Policy')" class="hover:text-[var(--text-color)] flex items-center gap-1.5"><i class="fa-solid fa-shield-halved"></i><span>security</span></a>
+        <a href="#privacy" onclick="event.preventDefault(); showToast('Privacy Policy')" class="hover:text-[var(--text-color)] flex items-center gap-1.5"><i class="fa-solid fa-lock"></i><span>privacy</span></a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button onclick="openCommandLine('theme')" class="hover:text-[var(--text-color)] flex items-center gap-1.5">
+          <i class="fa-solid fa-palette"></i>
+          <span id="footerThemeName">serika dark</span>
+        </button>
+        <span class="flex items-center gap-1"><i class="fa-solid fa-code-branch"></i><span>v26.42.0</span></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 6. FLOATING ACTION BUTTONS (BOTTOM-LEFT CMD LINE & BOTTOM-RIGHT SCROLL TOP) -->
+  <button
+    onclick="openCommandLine()"
+    class="fixed bottom-4 left-4 w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm shadow-lg z-40 transition-transform active:scale-90 hover:scale-105"
+    style="background-color: var(--main-color); color: #2c2e31;"
+    title="Command Line (Ctrl+Shift+P)"
+  >
+    <span>&gt;_</span>
+  </button>
+
+  <button
+    onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+    class="fixed bottom-4 right-4 w-11 h-11 rounded-full flex items-center justify-center text-sm shadow-lg z-40 transition-transform active:scale-90 hover:scale-105 border border-white/5"
+    style="background-color: var(--sub-alt-color); color: var(--sub-color);"
+    title="Scroll to top"
+  >
+    <i class="fa-solid fa-angles-up"></i>
+  </button>
+
+  <!-- 7. INTERACTIVE COMMAND LINE MODAL (ESCAPE / CTRL+SHIFT+P) -->
+  <div id="commandLineModal" onclick="if(event.target===this) closeCommandLine()" class="fixed inset-0 bg-black/60 backdrop-blur-[1px] z-50 hidden items-start justify-center pt-16 px-4">
+    <div class="w-full max-w-xl mt-bg rounded-xl shadow-2xl overflow-hidden border border-white/10">
+      <div class="flex items-center px-4 py-3 border-b border-white/10 gap-3">
+        <span class="font-bold text-sm" style="color: var(--main-color);">&gt;_</span>
+        <input
+          id="cmdSearchInput"
+          type="text"
+          oninput="renderCommandLineList(this.value)"
+          placeholder="Type to search settings, themes, sounds, funbox..."
+          class="w-full bg-transparent outline-none text-sm"
+          style="color: var(--text-color);"
+        />
+        <button onclick="closeCommandLine()" class="mt-sub hover:text-[var(--text-color)] text-xs">esc</button>
+      </div>
+      <div id="cmdResultsList" class="max-h-80 overflow-y-auto divide-y divide-white/5 text-xs sm:text-sm"></div>
+    </div>
+  </div>
+
+  <!-- 8. LEADERBOARD & ABOUT & JSON MODALS -->
+  <div id="leaderboardModal" onclick="if(event.target===this) closeModal('leaderboardModal')" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+    <div class="w-full max-w-lg mt-bg rounded-xl p-6 border border-white/10 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold flex items-center gap-2" style="color: var(--main-color);"><i class="fa-solid fa-crown"></i> All-Time English Time 30 Leaderboard</h3>
+        <button onclick="closeModal('leaderboardModal')" class="mt-sub hover:text-[var(--text-color)]"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="space-y-2 text-xs sm:text-sm">
+        <div class="mt-sub-alt p-3 rounded-lg flex justify-between"><span>1. rocket_fingers</span><span style="color: var(--main-color);" class="font-bold">248 wpm (99.4%)</span></div>
+        <div class="mt-sub-alt p-3 rounded-lg flex justify-between"><span>2. serika_legend</span><span style="color: var(--main-color);" class="font-bold">236 wpm (98.9%)</span></div>
+        <div class="mt-sub-alt p-3 rounded-lg flex justify-between"><span>3. thocky_creams</span><span style="color: var(--main-color);" class="font-bold">221 wpm (100%)</span></div>
+        <div class="mt-sub-alt p-3 rounded-lg flex justify-between"><span>4. dvorak_master</span><span style="color: var(--main-color);" class="font-bold">212 wpm (99.1%)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="aboutModal" onclick="if(event.target===this) closeModal('aboutModal')" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+    <div class="w-full max-w-lg mt-bg rounded-xl p-6 border border-white/10 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold flex items-center gap-2" style="color: var(--main-color);"><i class="fa-solid fa-circle-info"></i> About TypeFarming</h3>
+        <button onclick="closeModal('aboutModal')" class="mt-sub hover:text-[var(--text-color)]"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p class="text-xs sm:text-sm mt-sub leading-relaxed">
+        TypeFarming is a minimalistic and customizable typing test. It features many test modes, an account system to save your typing speed history, and user-configurable features such as themes, sounds, a smooth caret, and more.
+      </p>
+    </div>
+  </div>
+
+  <div id="jsonModal" onclick="if(event.target===this) closeModal('jsonModal')" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+    <div class="w-full max-w-lg mt-bg rounded-xl p-6 border border-white/10 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 id="jsonModalTitle" class="text-base font-bold" style="color: var(--main-color);">Settings JSON</h3>
+        <button onclick="closeModal('jsonModal')" class="mt-sub hover:text-[var(--text-color)]"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <textarea id="jsonModalTextarea" rows="7" class="w-full mt-input font-mono text-xs p-3"></textarea>
+      <div class="flex justify-end gap-2">
+        <button onclick="applyImportedJson()" class="mt-btn active px-4 py-2">Apply / Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. CUSTOM TEXT CONFIGURATION MODAL (Matches Screenshot_2026-10-30-17-50-03) -->
+  <div id="custom-text-modal" onclick="if(event.target===this) closeCustomTextModal()" class="fixed inset-0 bg-black/65 z-50 hidden items-start justify-center overflow-y-auto py-8 px-3 sm:px-6">
+    <div class="w-full max-w-2xl rounded-xl p-4 sm:p-6 shadow-2xl space-y-5 my-auto border border-white/5" style="background-color: var(--bg-color); color: var(--text-color);">
+      
+      <!-- mode -->
+      <div class="space-y-1.5">
+        <div class="text-xs sm:text-sm mt-sub flex items-center gap-1.5 font-medium">
+          <i class="fa-solid fa-gear text-xs"></i>
+          <span>mode</span>
+        </div>
+        <p class="text-xs leading-relaxed" style="color: var(--text-color);">Change the way words are generated.</p>
+        <div class="grid grid-cols-4 gap-2 pt-0.5">
+          <button type="button" data-cmode="simple" onclick="setCustomTextMode('simple')" class="custom-mode-btn mt-btn active">simple</button>
+          <button type="button" data-cmode="repeat" onclick="setCustomTextMode('repeat')" class="custom-mode-btn mt-btn">repeat</button>
+          <button type="button" data-cmode="shuffle" onclick="setCustomTextMode('shuffle')" class="custom-mode-btn mt-btn">shuffle</button>
+          <button type="button" data-cmode="random" onclick="setCustomTextMode('random')" class="custom-mode-btn mt-btn">random</button>
+        </div>
+      </div>
+
+      <!-- limit -->
+      <div class="space-y-1.5">
+        <div class="text-xs sm:text-sm mt-sub flex items-center gap-1.5 font-medium">
+          <i class="fa-solid fa-backward-step text-xs"></i>
+          <span>limit</span>
+        </div>
+        <p class="text-xs leading-relaxed" style="color: var(--text-color);">Control how many words to generate or for how long you want to type.</p>
+        <div class="flex items-center gap-2 pt-0.5">
+          <input id="customLimitWords" type="number" min="0" placeholder="words" class="w-full mt-input text-xs py-2" oninput="if(this.value) document.getElementById('customLimitTime').value=''" />
+          <span class="text-xs mt-sub shrink-0">or</span>
+          <input id="customLimitTime" type="number" min="0" placeholder="time" class="w-full mt-input text-xs py-2" oninput="if(this.value) document.getElementById('customLimitWords').value=''" />
+        </div>
+      </div>
+
+      <!-- word delimiter -->
+      <div class="space-y-1.5">
+        <div class="text-xs sm:text-sm mt-sub flex items-center gap-1.5 font-medium">
+          <span class="font-bold text-xs">||</span>
+          <span>word delimiter</span>
+        </div>
+        <p class="text-xs leading-relaxed" style="color: var(--text-color);">Change how words are separated. Using the pipe delimiter allows you to randomize groups of words.</p>
+        <div class="grid grid-cols-2 gap-2 pt-0.5">
+          <button type="button" data-cdelim="pipe" onclick="setCustomDelimiter('pipe')" class="custom-delim-btn mt-btn">pipe</button>
+          <button type="button" data-cdelim="space" onclick="setCustomDelimiter('space')" class="custom-delim-btn mt-btn active">space</button>
+        </div>
+      </div>
+
+      <!-- Action Buttons Stack (open file, words filter, custom generator) -->
+      <div class="space-y-2 pt-1">
+        <input id="customFileInput" type="file" accept=".txt" class="hidden" onchange="handleCustomFileUpload(event)" />
+        <button type="button" onclick="document.getElementById('customFileInput').click()" class="w-full mt-btn py-2" style="color: var(--text-color);">
+          <i class="fa-solid fa-file-import text-xs"></i>
+          <span>open file</span>
+        </button>
+        <button type="button" onclick="filterCustomWordsPrompt()" class="w-full mt-btn py-2" style="color: var(--text-color);">
+          <i class="fa-solid fa-filter text-xs"></i>
+          <span>words filter</span>
+        </button>
+        <button type="button" onclick="generateRandomCustomSample()" class="w-full mt-btn py-2" style="color: var(--text-color);">
+          <i class="fa-solid fa-gears text-xs"></i>
+          <span>custom generator</span>
+        </button>
+      </div>
+
+      <!-- remove zero-width characters -->
+      <div class="space-y-1.5">
+        <div class="text-xs sm:text-sm mt-sub flex items-center gap-1.5 font-medium">
+          <i class="fa-solid fa-text-Slash text-xs">I</i>
+          <span>remove zero-width characters</span>
+        </div>
+        <p class="text-xs leading-relaxed" style="color: var(--text-color);">Fully remove zero-width characters.</p>
+        <button type="button" onclick="applyCustomTextTransform('zeroWidth')" class="w-full mt-btn py-2" style="color: var(--text-color);">apply</button>
+      </div>
+
+      <!-- remove fancy typography -->
+      <div class="space-y-1.5">
+        <div class="text-xs sm:text-sm mt-sub flex items-center gap-1.5 font-medium">
+          <i class="fa-solid fa-pen-fancy text-xs"></i>
+          <span>remove fancy typography</span>
+        </div>
+        <p class="text-xs leading-relaxed" style="color: var(--text-color);">Standardises typography symbols (for example “ and ” become ")</p>
+        <button type="button" onclick="applyCustomTextTransform('fancyTypography')" class="w-full mt-btn py-2" style="color: var(--text-color);">apply</button>
+      </div>
+
+      <!-- replace control characters -->
+      <div class="space-y-1.5">
+        <div class="text-xs sm:text-sm mt-sub flex items-center gap-1.5 font-medium">
+          <i class="fa-solid fa-code text-xs"></i>
+          <span>replace control characters</span>
+        </div>
+        <p class="text-xs leading-relaxed" style="color: var(--text-color);">Replace control characters (\n becomes a new line and \t becomes a tab)</p>
+        <button type="button" onclick="applyCustomTextTransform('controlChars')" class="w-full mt-btn py-2" style="color: var(--text-color);">apply</button>
+      </div>
+
+      <!-- replace new lines with spaces -->
+      <div class="space-y-1.5">
+        <div class="text-xs sm:text-sm mt-sub flex items-center gap-1.5 font-medium">
+          <i class="fa-solid fa-turn-down rotate-90 text-xs"></i>
+          <span>replace new lines with spaces</span>
+        </div>
+        <p class="text-xs leading-relaxed" style="color: var(--text-color);">Replace all new line characters with spaces. Can automatically add periods to the end of lines if you wish.</p>
+        <div class="grid grid-cols-2 gap-2 pt-0.5">
+          <button type="button" onclick="applyCustomTextTransform('newlineSpace')" class="mt-btn py-2" style="color: var(--text-color);">space</button>
+          <button type="button" onclick="applyCustomTextTransform('newlinePeriodSpace')" class="mt-btn py-2" style="color: var(--text-color);">period + space</button>
+        </div>
+      </div>
+
+      <!-- save / saved texts -->
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button type="button" onclick="saveCurrentCustomText()" class="mt-btn py-2" style="color: var(--text-color);">
+          <i class="fa-solid fa-floppy-disk text-xs"></i>
+          <span>save</span>
+        </button>
+        <button type="button" onclick="loadSavedCustomText()" class="mt-btn py-2" style="color: var(--text-color);">
+          <i class="fa-solid fa-folder text-xs"></i>
+          <span>saved texts</span>
+        </button>
+      </div>
+
+      <!-- Custom Textarea -->
+      <div>
+        <textarea
+          id="customTextArea"
+          rows="12"
+          spellcheck="false"
+          class="w-full rounded-lg p-3.5 text-xs sm:text-sm font-mono outline-none resize-y leading-relaxed"
+          style="background-color: var(--bg-color); color: var(--text-color); border: 1.5px solid var(--sub-color); caret-color: var(--main-color);"
+        >The quick brown fox jumps over the lazy dog</textarea>
+      </div>
+
+      <!-- Bottom ok button -->
+      <div>
+        <button type="button" onclick="applyAndCloseCustomTextModal()" class="w-full mt-btn py-2.5 font-medium" style="color: var(--text-color);">
+          ok
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastNotice" class="fixed top-12 right-4 z-50 hidden px-4 py-2.5 rounded-lg shadow-xl text-xs font-semibold transition-all" style="background-color: var(--main-color); color: var(--bg-color);"></div>
+
+  <!-- ========================================== -->
+  <!-- APPLICATION JAVASCRIPT                     -->
+  <!-- ========================================== -->
+  <script>
+    /**************************************************************
+     * 1. PRESET THEMES (Matches 2148, 2149, 2150, 2151, 2152)
+     **************************************************************/
+    const THEMES = [
+      // Light & Pastel Presets (from 2148 & 2149)
+      { name: 'dino', bg: '#ffffff', subAlt: '#f0f0f0', main: '#40d672', text: '#1d221f', sub: '#999999' },
+      { name: 'magic girl', bg: '#ffffff', subAlt: '#f5e6f0', main: '#f5b1cc', text: '#00ac8c', sub: '#93e8d3' },
+      { name: 'milkshake', bg: '#ffffff', subAlt: '#f3f3f3', main: '#212b43', text: '#212b43', sub: '#62cfe6' },
+      { name: 'modern ink', bg: '#ffffff', subAlt: '#f2f2f2', main: '#ff360d', text: '#000000', sub: '#b7b7b7' },
+      { name: 'ms cupcakes', bg: '#ffffff', subAlt: '#f5f8fa', main: '#5ed5f3', text: '#0a282f', sub: '#d64090' },
+      { name: 'sewing tin light', bg: '#ffffff', subAlt: '#f0f0f7', main: '#2d2076', text: '#2d2076', sub: '#385eca' },
+      { name: 'vesper light', bg: '#ffffff', subAlt: '#f4f4f4', main: '#de935f', text: '#1c1c1c', sub: '#999999' },
+      { name: 'lilac mist', bg: '#fffbfe', subAlt: '#f3e8f5', main: '#b94189', text: '#5c2954', sub: '#b386b8' },
+      { name: 'rose pine dawn', bg: '#fffaf3', subAlt: '#f2e9e1', main: '#56949f', text: '#575279', sub: '#9893a5' },
+      { name: 'soaring skies', bg: '#fff9f2', subAlt: '#eee5da', main: '#55c6f0', text: '#1d1e1e', sub: '#1e107a' },
+      { name: 'rainbow trail', bg: '#f5f5f5', subAlt: '#e8e8e8', main: '#363636', text: '#1f1f1f', sub: '#666666' },
+      { name: 'nord light', bg: '#eceff4', subAlt: '#d8dee9', main: '#8fbcbb', text: '#2e3440', sub: '#6a7791' },
+      { name: 'solarized light', bg: '#fdf6e3', subAlt: '#eee8d5', main: '#859900', text: '#073642', sub: '#268bd2' },
+      { name: 'tangerine', bg: '#ffede0', subAlt: '#fdddc7', main: '#fe5503', text: '#3d1705', sub: '#ff9662' },
+      { name: 'camping', bg: '#faf1e4', subAlt: '#e7dccb', main: '#618c56', text: '#3c403b', sub: '#c2b8aa' },
+      { name: 'slambook', bg: '#FFFDDE', subAlt: '#f2efbe', main: '#13005A', text: '#13005A', sub: '#1c82adc4' },
+      { name: 'paper', bg: '#eeeeee', subAlt: '#dddddd', main: '#444444', text: '#444444', sub: '#b2b2b2' },
+      { name: 'desert oasis', bg: '#fff2d5', subAlt: '#eddebc', main: '#d19d01', text: '#332800', sub: '#0061fe' },
+      { name: 'iceberg light', bg: '#e8e9ec', subAlt: '#dcdfe7', main: '#2d539e', text: '#33374c', sub: '#8389a3' },
+      { name: 'cheesecake', bg: '#fdf0d5', subAlt: '#f3e2bf', main: '#8e2949', text: '#3a3335', sub: '#d91c81' },
+      { name: '9009', bg: '#eeebe2', subAlt: '#d3cfc1', main: '#080909', text: '#080909', sub: '#99947f' },
+      { name: 'lil dragon', bg: '#ebe1ef', subAlt: '#dacae2', main: '#8a5bd6', text: '#212b43', sub: '#a28db8' },
+      { name: 'blueberry light', bg: '#dae0f5', subAlt: '#c1c8e4', main: '#506477', text: '#678198', sub: '#92a4be' },
+      { name: 'witch girl', bg: '#f3dbda', subAlt: '#e7c8c7', main: '#56786a', text: '#56786a', sub: '#ddb4a7' },
+      { name: 'terrazzo', bg: '#f1e5da', subAlt: '#e3d3c4', main: '#e0794e', text: '#023e3b', sub: '#688e8f' },
+      { name: 'darling', bg: '#fec8cd', subAlt: '#f2b1b7', main: '#ffffff', text: '#ffffff', sub: '#a30000' },
+      { name: 'serika', bg: '#e1e1e3', subAlt: '#d1d3d8', main: '#e2b714', text: '#323437', sub: '#aaaeb3' },
+      { name: 'gruvbox light', bg: '#fbf1c7', subAlt: '#ebdbb2', main: '#689d6a', text: '#3c3836', sub: '#a89984' },
+      { name: 'repose light', bg: '#efead0', subAlt: '#dfd9bd', main: '#5f605e', text: '#333538', sub: '#8f8e84' },
+      { name: 'godspeed', bg: '#eae4cf', subAlt: '#ded7be', main: '#9abbcd', text: '#646669', sub: '#ada998' },
+      { name: 'dollar', bg: '#e4e4d4', subAlt: '#d4d4c2', main: '#6b886b', text: '#555a56', sub: '#8a9b69' },
+      { name: 'dmg', bg: '#dadbdc', subAlt: '#ccd0d2', main: '#ae185e', text: '#414141', sub: '#3846b1' },
+      { name: 'modern dolch light', bg: '#dbdbdb', subAlt: '#cccccc', main: '#8fd1c3', text: '#454545', sub: '#acacac' },
+      { name: 'olive', bg: '#e9e5cc', subAlt: '#d7d3b8', main: '#92946f', text: '#373731', sub: '#b7b39e' },
+      { name: 'taro', bg: '#b3baff', subAlt: '#a3a9ec', main: '#130f1a', text: '#130f1a', sub: '#6f6c91' },
+      { name: 'shoko', bg: '#ced7e0', subAlt: '#b7c4d0', main: '#81c4dd', text: '#3b4c58', sub: '#7599b1' },
+      { name: 'beach', bg: '#ffeead', subAlt: '#f7e396', main: '#96ceb4', text: '#5b7869', sub: '#ffcc5c' },
+      { name: 'breeze', bg: '#e8d5c4', subAlt: '#d6c1ae', main: '#7d67a9', text: '#1b4c5e', sub: '#3a98b9' },
+      { name: 'pastel', bg: '#e0b2bd', subAlt: '#d19ea9', main: '#fbf4b6', text: '#6d5c6f', sub: '#b4e9ff' },
+      { name: 'vaporwave', bg: '#a4a7ea', subAlt: '#9194dc', main: '#e368da', text: '#f1ebf1', sub: '#7c7faf' },
+      { name: 'frozen llama', bg: '#9bf2ea', subAlt: '#85e0d8', main: '#6d44a6', text: '#ffffff', sub: '#b690fd' },
+      { name: 'mizu', bg: '#afcbdd', subAlt: '#9ab9ce', main: '#fcfbf6', text: '#1a2633', sub: '#85a5bb' },
+      { name: 'strawberry', bg: '#f37f83', subAlt: '#e16b6f', main: '#fcfcf8', text: '#fcfcf8', sub: '#e53c58' },
+      { name: 'creamsicle', bg: '#ff9869', subAlt: '#f08756', main: '#fcfcf8', text: '#fcfcf8', sub: '#ff661f' },
+      { name: 'cafe', bg: '#ceb18d', subAlt: '#bba07d', main: '#14120f', text: '#14120f', sub: '#d4d2d1' },
+      { name: 'mexican', bg: '#f8ad34', subAlt: '#e59922', main: '#b12189', text: '#eee', sub: '#333' },
+      { name: 'botanical', bg: '#7b9c98', subAlt: '#698a86', main: '#eaf1f3', text: '#eaf1f3', sub: '#495755' },
+      { name: 'honey', bg: '#f2aa00', subAlt: '#e09b00', main: '#fff546', text: '#f3eecb', sub: '#a66b00' },
+      { name: 'alpine', bg: '#6c687f', subAlt: '#5b576d', main: '#ffffff', text: '#ffffff', sub: '#9994b8' },
+      { name: 'our theme', bg: '#ce1226', subAlt: '#b30f20', main: '#fcd116', text: '#ffffff', sub: '#6d0f19' },
+      { name: 'ez mode', bg: '#0068c6', subAlt: '#0057a8', main: '#fa62d5', text: '#ffffff', sub: '#4ddb47' },
+      { name: 'menthol', bg: '#00c18c', subAlt: '#00a87a', main: '#ffffff', text: '#ffffff', sub: '#186544' },
+      { name: 'red samurai', bg: '#84202c', subAlt: '#6d1923', main: '#c79e6e', text: '#e2dad0', sub: '#55131b' },
+      { name: 'sweden', bg: '#0058a3', subAlt: '#004987', main: '#ffcc02', text: '#ffffff', sub: '#57abdb' },
+      { name: 'striker', bg: '#124883', subAlt: '#0e3a6b', main: '#d7dcda', text: '#d6dbd9', sub: '#4a76a8' },
+      { name: 'retrocast', bg: '#07737a', subAlt: '#055e64', main: '#88dbdf', text: '#ffffff', sub: '#f3e03b' },
+      { name: 'bento', bg: '#2d394d', subAlt: '#263041', main: '#ff7a90', text: '#fffaf8', sub: '#4a768d' },
+      { name: '8008', bg: '#333a45', subAlt: '#2e343d', main: '#f44c7f', text: '#e9ecf0', sub: '#939eae' },
+
+      // Dark Presets (from 2150, 2151, 2152)
+      { name: 'onedark', bg: '#2f343f', subAlt: '#262b34', main: '#61afef', text: '#98c379', sub: '#eceff4' },
+      { name: 'discord', bg: '#313338', subAlt: '#2b2d31', main: '#5a65ea', text: '#dcdee3', sub: '#565861' },
+      { name: 'serika dark', bg: '#323437', subAlt: '#2c2e31', main: '#e2b714', text: '#d1d0c5', sub: '#646669' },
+      { name: 'repose dark', bg: '#2f3338', subAlt: '#262a2e', main: '#d6d2bc', text: '#d6d2bc', sub: '#8f8e84' },
+      { name: 'rose pine moon', bg: '#2a273f', subAlt: '#232136', main: '#9ccfd8', text: '#e0def4', sub: '#6e6a86' },
+      { name: 'blueberry dark', bg: '#212b42', subAlt: '#1b2336', main: '#add7ff', text: '#91b4d5', sub: '#5c7da5' },
+      { name: 'oblivion', bg: '#313231', subAlt: '#292a29', main: '#a5a096', text: '#f7f5f1', sub: '#5d6263' },
+      { name: 'watermelon', bg: '#1f4437', subAlt: '#19372c', main: '#d6686f', text: '#cdc6bc', sub: '#3e7a65' },
+      { name: 'carbon', bg: '#313131', subAlt: '#292929', main: '#f66e0d', text: '#f5e6c8', sub: '#616161' },
+      { name: 'future funk', bg: '#2e1a47', subAlt: '#26153b', main: '#f7f2ea', text: '#f7f2ea', sub: '#c18fff' },
+      { name: 'mint', bg: '#05385b', subAlt: '#042e4b', main: '#5cdb95', text: '#edf5e1', sub: '#20688a' },
+      { name: 'sonokai', bg: '#2c2e34', subAlt: '#232429', main: '#9ed072', text: '#e2e2e3', sub: '#e7c664' },
+      { name: 'laser', bg: '#221b44', subAlt: '#1b1536', main: '#009eaf', text: '#dbe7e8', sub: '#b82356' },
+      { name: 'dracula', bg: '#282a36', subAlt: '#21222c', main: '#bd93f9', text: '#f8f8f2', sub: '#6272a4' },
+      { name: 'material', bg: '#263238', subAlt: '#1f292e', main: '#80cbc4', text: '#eeffff', sub: '#4c6772' },
+      { name: 'modern dolch', bg: '#2d2e30', subAlt: '#242527', main: '#7eddd3', text: '#e3e6eb', sub: '#54585c' },
+      { name: 'superuser', bg: '#262a33', subAlt: '#1f232c', main: '#43ffaf', text: '#e5f7ef', sub: '#526777' },
+      { name: 'nord', bg: '#242933', subAlt: '#1d212a', main: '#88c0d0', text: '#d8dee9', sub: '#617b94' },
+      { name: '80s after dark', bg: '#1b1d36', subAlt: '#15172b', main: '#fca6d1', text: '#e1e7ec', sub: '#99d6ea' },
+      { name: 'github', bg: '#212830', subAlt: '#191f26', main: '#41ce5c', text: '#ccdae6', sub: '#788386' },
+      { name: 'gruvbox dark', bg: '#282828', subAlt: '#1d2021', main: '#d79921', text: '#ebdbb2', sub: '#665c54' },
+      { name: 'catppuccin', bg: '#1e1e2e', subAlt: '#181825', main: '#cba6f7', text: '#cdd6f4', sub: '#7f849c' },
+      { name: 'monokai', bg: '#272822', subAlt: '#1f201b', main: '#a6e22e', text: '#e2e2dc', sub: '#e6db74' },
+      { name: 'nautilus', bg: '#132237', subAlt: '#0e1a2b', main: '#ebb723', text: '#1cbaac', sub: '#0b4c6c' },
+      { name: 'rose pine', bg: '#1f1d27', subAlt: '#191724', main: '#9ccfd8', text: '#e0def4', sub: '#c4a7e7' },
+      { name: 'night runner', bg: '#212121', subAlt: '#191919', main: '#feff04', text: '#e8e8e8', sub: '#5c4a9c' },
+      { name: 'vscode', bg: '#1e1e1e', subAlt: '#171717', main: '#007acc', text: '#d4d4d4', sub: '#4d4d4d' },
+      { name: 'metropolis', bg: '#0f1f2c', subAlt: '#0b1822', main: '#56c3b7', text: '#e4edf1', sub: '#326984' },
+      { name: 'solarized dark', bg: '#002b36', subAlt: '#00222b', main: '#859900', text: '#268bd2', sub: '#2aa198' },
+      { name: 'cyberspace', bg: '#181c18', subAlt: '#131613', main: '#00ce7c', text: '#c2fbe1', sub: '#9578d3' },
+      { name: 'terminal', bg: '#191a1b', subAlt: '#141516', main: '#79a617', text: '#e7eae0', sub: '#48494b' },
+      { name: 'chaos theory', bg: '#141221', subAlt: '#0e0d18', main: '#fd77d7', text: '#dde5ed', sub: '#676e8a' },
+      { name: 'joker', bg: '#1a0e25', subAlt: '#140a1d', main: '#99de1e', text: '#e9e2f5', sub: '#7554a3' },
+      { name: 'dots', bg: '#121520', subAlt: '#0e1019', main: '#ffffff', text: '#ffffff', sub: '#676e8a' },
+      { name: 'miami nights', bg: '#18181a', subAlt: '#121214', main: '#e4609b', text: '#fff', sub: '#47bac0' },
+      { name: 'aurora', bg: '#011926', subAlt: '#00121c', main: '#00e980', text: '#fff', sub: '#245c69' },
+      { name: 'red dragon', bg: '#1a0b0c', subAlt: '#120708', main: '#ff3a32', text: '#4a4d4e', sub: '#e2a528' },
+      { name: 'dark', bg: '#111111', subAlt: '#0a0a0a', main: '#eeeeee', text: '#eeeeee', sub: '#444444' },
+      { name: 'rgb', bg: '#111111', subAlt: '#0a0a0a', main: '#eaeaea', text: '#eaeaea', sub: '#444444' },
+      { name: 'arch', bg: '#0c0d11', subAlt: '#07080b', main: '#7ebab5', text: '#f6f5f5', sub: '#454864' },
+      { name: 'incognito', bg: '#0e0e0e', subAlt: '#080808', main: '#ff9900', text: '#c6c6c6', sub: '#555555' },
+      { name: 'matrix', bg: '#000000', subAlt: '#061206', main: '#15ff00', text: '#d1ffcd', sub: '#006500' },
+      { name: 'stealth', bg: '#010203', subAlt: '#070809', main: '#383e42', text: '#383e42', sub: '#5e676e' },
+      { name: 'shadow', bg: '#000000', subAlt: '#0b0b0b', main: '#eeeeee', text: '#eeeeee', sub: '#444444' }
+    ];
+
+    /**************************************************************
+     * 2. FONTS & FUNBOX LISTS (Matches 2142 & 2147)
+     **************************************************************/
+    const FONTS = [
+      'Adwaita Mono', 'Atkinson Hyperlegible', 'Boon',
+      'Cascadia Mono', 'Comfortaa', 'Helvetica',
+      'Coming Soon', 'CommitMono', 'Courier',
+      'Fira Code', 'Geist', 'Geist Mono',
+      'Georgia', 'Hack', 'IBM Plex Mono',
+      'IBM Plex Sans', 'Inconsolata', 'Inter Tight',
+      'Iosevka', 'Itim', 'JetBrains Mono',
+      'Kanit', 'Lalezar', 'Lato',
+      'Lexend Deca', 'Mononoki', 'Montserrat',
+      'Noto Naskh Arabic', 'Noto Sans Lao', 'Nunito',
+      'Open Dyslexic', 'Overpass Mono', 'Oxygen',
+      'Parkinsans', 'Proto', 'Roboto',
+      'Roboto Mono', 'Sarabun', 'Source Code Pro',
+      'Space Grotesk', 'Titillium Web', 'Ubuntu',
+      'Ubuntu Mono', 'custom'
+    ];
+
+    const FUNBOX_MODES = [
+      '58008', 'mirror', 'upside down',
+      'nausea', 'round round baby', 'simon says',
+      'tts', 'choo choo', 'arrows',
+      'rAnDoMcAsE', 'sPoNgEcAsE', 'capitals',
+      'layout mirror', 'layoutfluid', 'earthquake',
+      'space balls', 'gibberish', 'ascii',
+      'specials', 'plus zero', 'plus one',
+      'plus two', 'plus three', 'read ahead easy',
+      'read ahead', 'read ahead hard', 'memory',
+      'nospace', 'poetry', 'wikipedia',
+      'weakspot', 'pseudolang', 'IPv4',
+      'IPv6', 'binary', 'hexadecimal',
+      'zipf', 'morse', 'crt',
+      'backwards', 'ddoouubblleedd', 'instant messaging',
+      'underscore_spaces', 'ALL CAPS', 'polyglot',
+      'asl', 'rot13', 'no quit'
+    ];
+
+    const CLICK_SOUNDS = [
+      'off', 'click', 'beep',
+      'pop', 'nk creams', 'typewriter',
+      'osu', 'hitmarker', 'sine',
+      'sawtooth', 'square', 'triangle',
+      'pentatonic', 'wholetone', 'fist fight',
+      'rubber keys', 'fart', 'akko lavenders',
+      'cherrymx black abs', 'cherrymx black pbt', 'cherrymx blue abs',
+      'cherrymx blue pbt', 'cherrymx brown pbt', 'kailh box white',
+      'razer green', 'tealios v2', 'trust gxt'
+    ];
+
+    /**************************************************************
+     * 3. DEFAULT SETTINGS STATE (Matches Reference Screenshots)
+     **************************************************************/
+    const DEFAULT_SETTINGS = {
+      // Behavior
+      difficulty: 'normal',
+      quickRestart: 'off',
+      repeatQuotes: 'off',
+      blindMode: 'off',
+      alwaysShowWordsHistory: 'off',
+      singleListCommandLine: 'on',
+      minSpeed: 'off',
+      minSpeedVal: 100,
+      minAccuracy: 'off',
+      minAccuracyVal: 90,
+      minWordBurst: 'off',
+      minWordBurstVal: 100,
+      britishEnglish: 'off',
+      language: 'english',
+      funbox: 'none',
+      layoutfluidTags: ['qwerty', 'dvorak', 'colemak'],
+      polyglotTags: ['english', 'spanish', 'french', 'german'],
+
+      // Input
+      freedomMode: 'off',
+      strictSpace: 'off',
+      oppositeShiftMode: 'off',
+      stopOnError: 'off',
+      deleteOnError: 'off',
+      confidenceMode: 'off',
+      quickEnd: 'off',
+      indicateTypos: 'off',
+      hideExtraLetters: 'off',
+      compositionDisplay: 'replace',
+      lazyMode: 'off',
+      layout: 'qwerty',
+      codeUnindentOnBackspace: 'off',
+
+      // Sound
+      soundVolume: 0.5,
+      playSoundOnClick: 'off',
+      playSoundOnError: 'off',
+      playTimeWarning: 'off',
+
+      // Caret
+      smoothCaret: 'medium',
+      caretStyle: 'default',
+      paceCaret: 'off',
+      paceCaretVal: 100,
+      repeatedPace: 'on',
+      paceCaretStyle: 'default',
+
+      // Appearance
+      liveProgressStyle: 'mini',
+      liveSpeedStyle: 'off',
+      liveAccuracyStyle: 'off',
+      liveWordBurstStyle: 'off',
+      timerColor: 'main',
+      timerOpacity: '1',
+      highlightMode: 'letter',
+      typedEffect: 'keep',
+      tapeMode: 'off',
+      tapeMargin: 50,
+      smoothLineScroll: 'off',
+      showAllLines: 'off',
+      alwaysShowDecimalPlaces: 'off',
+      typingSpeedUnit: 'wpm',
+      startGraphsAtZero: 'on',
+      maxLineWidth: 0,
+      fontSize: 2,
+      fontFamily: 'Roboto Mono',
+      keymapMode: 'off',
+
+      // Theme
+      flipTestColors: 'off',
+      colorfulMode: 'off',
+      customBgUrl: '',
+      customBgSize: 'cover',
+      autoSwitchTheme: 'off',
+      randomTheme: 'off',
+      themeTab: 'preset',
+      theme: 'serika dark',
+
+      // Hide Elements
+      showKeyTips: 'show',
+      showOutOfFocusWarning: 'show',
+      capsLockWarning: 'show',
+      showAverage: 'off',
+      ads: 'result'
+    };
+
+    let settings = JSON.parse(localStorage.getItem('mt_clone_settings')) || { ...DEFAULT_SETTINGS };
+
+    function saveSettings() {
+      localStorage.setItem('TF_clone_settings', JSON.stringify(settings));
+      applyVisualSettings();
+    }
+
+    /**************************************************************
+     * 4. WORD BANKS & QUOTES
+     **************************************************************/
+    const WORD_BANKS = {
+      english: [
+        "however", "home", "say", "he", "form", "last", "that", "increase", "make", "then",
+        "long", "just", "want", "only", "first", "against", "real", "the", "school", "back",
+        "not", "time", "year", "people", "way", "day", "man", "thing", "woman", "life",
+        "child", "world", "state", "family", "student", "group", "country", "problem", "hand", "part",
+        "place", "case", "week", "company", "system", "program", "question", "work", "government", "number",
+        "night", "point", "water", "room", "mother", "area", "money", "story", "fact", "month",
+        "lot", "right", "study", "book", "eye", "job", "word", "business", "issue", "side",
+        "kind", "head", "house", "service", "friend", "father", "power", "hour", "game", "line",
+        "end", "member", "law", "car", "city", "community", "name", "president", "team", "minute",
+        "idea", "kid", "body", "information", "nothing", "ago", "lead", "social", "understand", "whether"
+      ],
+      spanish: [
+        "tiempo", "persona", "vida", "mundo", "casa", "hombre", "mujer", "parte", "ciudad", "trabajo",
+        "noche", "agua", "punto", "mano", "libro", "palabra", "amigo", "padre", "madre", "nuevo",
+        "grande", "mejor", "siempre", "nunca", "ahora", "después", "donde", "cuando", "porque", "aunque"
+      ],
+      french: [
+        "temps", "monde", "jour", "homme", "femme", "vie", "main", "chose", "ville", "maison",
+        "enfant", "travail", "histoire", "heure", "année", "toujours", "jamais", "grand", "petit", "autre"
+      ],
+      german: [
+        "zeit", "mensch", "jahr", "tag", "welt", "leben", "hand", "stadt", "haus", "arbeit",
+        "wasser", "buch", "wort", "freund", "immer", "heute", "morgen", "groß", "klein", "ander"
+      ],
+      hindi: [
+        "namaste", "bharat", "samay", "duniya", "jeevan", "kaam", "shabd", "mitra", "ghar", "shahar",
+        "pustak", "paani", "sapna", "mehnat", "vishwas", "anand", "pragati", "gyan", "shanti", "parivar"
+      ]
+    };
+
+    const QUOTES = [
+      "The only way to do great work is to love what you do. If you have not found it yet, keep looking. Do not settle.",
+      "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+      "Simplicity is the soul of efficiency. Clean code always looks like it was written by someone who cares.",
+      "First, solve the problem. Then, write the code. Experience is the name everyone gives to their mistakes."
+    ];
+
+    /**************************************************************
+     * 5. WEB AUDIO SYNTHESIZER (MECHANICAL SWITCH SOUNDS)
+     **************************************************************/
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playSynthesizedSound(profile, isError = false) {
+      const vol = parseFloat(settings.soundVolume) || 0.5;
+      if (vol <= 0 || profile === 'off') return;
+      initAudio();
+      if (!audioCtx) return;
+
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      // Map switch profiles to distinct frequencies & waveforms
+      let freq = 420;
+      let type = 'triangle';
+      let dur = 0.045;
+
+      if (isError) {
+        freq = 160;
+        type = 'sawtooth';
+        dur = 0.08;
+      } else {
+        switch (profile) {
+          case 'click': freq = 950; type = 'triangle'; dur = 0.025; break;
+          case 'beep': freq = 800; type = 'sine'; dur = 0.06; break;
+          case 'pop': freq = 350; type = 'sine'; dur = 0.035; break;
+          case 'nk creams': freq = 280; type = 'triangle'; dur = 0.04; break;
+          case 'typewriter': freq = 1200; type = 'sawtooth'; dur = 0.03; break;
+          case 'osu': freq = 660; type = 'sine'; dur = 0.03; break;
+          case 'hitmarker': freq = 1400; type = 'square'; dur = 0.02; break;
+          case 'sine': freq = 520; type = 'sine'; dur = 0.05; break;
+          case 'sawtooth': freq = 440; type = 'sawtooth'; dur = 0.05; break;
+          case 'square': freq = 480; type = 'square'; dur = 0.04; break;
+          case 'triangle': freq = 500; type = 'triangle'; dur = 0.05; break;
+          case 'pentatonic': {
+            const notes = [261.6, 293.6, 329.6, 392.0, 440.0, 523.2];
+            freq = notes[Math.floor(Math.random() * notes.length)];
+            type = 'sine'; dur = 0.08; break;
+          }
+          case 'wholetone': {
+            const notes = [261.6, 293.6, 329.6, 369.9, 415.3, 466.1];
+            freq = notes[Math.floor(Math.random() * notes.length)];
+            type = 'triangle'; dur = 0.08; break;
+          }
+          case 'cherrymx blue abs':
+          case 'cherrymx blue pbt':
+          case 'razer green':
+          case 'kailh box white':
+            freq = 1150; type = 'square'; dur = 0.028; break;
+          case 'cherrymx brown pbt':
+          case 'akko lavenders':
+            freq = 390; type = 'triangle'; dur = 0.035; break;
+          case 'cherrymx black abs':
+          case 'cherrymx black pbt':
+          case 'tealios v2':
+            freq = 240; type = 'sine'; dur = 0.038; break;
+          case 'fart':
+            freq = 95; type = 'sawtooth'; dur = 0.12; break;
+          default:
+            freq = 460; type = 'triangle'; dur = 0.035;
+        }
+      }
+
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      if (profile === 'pop' || profile === 'nk creams') {
+        osc.frequency.exponentialRampToValueAtTime(110, now + dur);
+      }
+
+      gain.gain.setValueAtTime(vol * 0.35, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + dur);
+    }
+
+    /**************************************************************
+     * 6. TYPING TEST ENGINE STATE
+     **************************************************************/
+    let testState = {
+      mode: 'time',       // 'time' | 'words' | 'quote' | 'zen' | 'custom'
+      amount: 30,         // seconds or words
+      punctuation: false,
+      numbers: false,
+      words: [],          // array of target strings
+      typedHistory: [],   // array of typed strings
+      currentWordIndex: 0,
+      currentInput: '',
+      isRunning: false,
+      isFinished: false,
+      startTime: null,
+      timerInterval: null,
+      timeRemaining: 30,
+      timeElapsed: 0,
+      wpmHistory: [],
+      totalKeystrokes: 0,
+      correctKeystrokes: 0,
+      errorKeystrokes: 0,
+      lastWordStartTime: null,
+      lastBurstWpm: 0,
+      customConfig: {
+        text: 'The quick brown fox jumps over the lazy dog',
+        mode: 'simple',       // 'simple' | 'repeat' | 'shuffle' | 'random'
+        delimiter: 'space',   // 'space' | 'pipe'
+        limitWords: 0,
+        limitTime: 0
+      }
+    };
+
+    function transformWordByFunbox(word, idx) {
+      const fb = settings.funbox;
+      if (!fb || fb === 'none') return word;
+      if (fb === '58008') return String(Math.floor(100 + Math.random() * 90000));
+      if (fb === 'ALL CAPS') return word.toUpperCase();
+      if (fb === 'capitals') return word.charAt(0).toUpperCase() + word.slice(1);
+      if (fb === 'backwards') return word.split('').reverse().join('');
+      if (fb === 'ddoouubblleedd') return word.split('').map(c => c + c).join('');
+      if (fb === 'sPoNgEcAsE') return word.split('').map((c, i) => i % 2 === 0 ? c.toLowerCase() : c.toUpperCase()).join('');
+      if (fb === 'rAnDoMcAsE') return word.split('').map(c => Math.random() > 0.5 ? c.toUpperCase() : c.toLowerCase()).join('');
+      if (fb === 'binary') return (idx % 16).toString(2).padStart(4, '0');
+      if (fb === 'hexadecimal') return Math.floor(Math.random() * 65535).toString(16);
+      if (fb === 'rot13') {
+        return word.replace(/[a-zA-Z]/g, c =>
+          String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26)
+        );
+      }
+      if (fb === 'arrows') {
+        const dirs = ['left', 'right', 'up', 'down'];
+        return dirs[Math.floor(Math.random() * dirs.length)];
+      }
+      return word;
+    }
+
+    function generateWordsList() {
+      const bank = WORD_BANKS[settings.language] || WORD_BANKS.english;
+      let list = [];
+
+      if (testState.mode === 'custom') {
+        const cfg = testState.customConfig;
+        const rawText = (cfg.text || 'The quick brown fox jumps over the lazy dog').trim();
+        let rawTokens = cfg.delimiter === 'pipe'
+          ? rawText.split('|').map(s => s.trim()).filter(Boolean)
+          : rawText.split(/\s+/).filter(Boolean);
+
+        if (rawTokens.length === 0) {
+          rawTokens = ['The', 'quick', 'brown', 'fox', 'jumps', 'over', 'the', 'lazy', 'dog'];
+        }
+
+        // Flatten multi-word pipe sections if needed after ordering
+        const targetCount = cfg.limitWords > 0
+          ? cfg.limitWords
+          : (cfg.limitTime > 0 ? 90 : rawTokens.length);
+
+        if (cfg.mode === 'simple') {
+          list = [...rawTokens];
+          if (cfg.limitWords > 0) list = list.slice(0, cfg.limitWords);
+        } else if (cfg.mode === 'repeat') {
+          const total = Math.max(targetCount, rawTokens.length);
+          for (let i = 0; i < total; i++) {
+            list.push(rawTokens[i % rawTokens.length]);
+          }
+        } else if (cfg.mode === 'shuffle') {
+          const pool = [...rawTokens];
+          for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [pool[i], pool[j]] = [pool[j], pool[i]];
+          }
+          const total = cfg.limitWords > 0 ? cfg.limitWords : pool.length;
+          for (let i = 0; i < total; i++) {
+            list.push(pool[i % pool.length]);
+          }
+        } else if (cfg.mode === 'random') {
+          const total = cfg.limitWords > 0 ? cfg.limitWords : Math.max(25, rawTokens.length);
+          for (let i = 0; i < total; i++) {
+            list.push(rawTokens[Math.floor(Math.random() * rawTokens.length)]);
+          }
+        }
+
+        // Split any pipe-grouped phrases into individual words for the typing engine
+        list = list.join(' ').split(/\s+/).filter(Boolean);
+        return list.map((w, i) => transformWordByFunbox(w, i));
+      } else if (testState.mode === 'quote') {
+        const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+        list = q.split(' ');
+      } else if (testState.mode === 'zen') {
+        list = ['type', 'freely', 'in', 'zen', 'mode', 'press', 'escape', 'to', 'finish'];
+      } else {
+        const count = testState.mode === 'words' ? testState.amount : 90;
+        for (let i = 0; i < count; i++) {
+          let w = bank[Math.floor(Math.random() * bank.length)];
+          w = transformWordByFunbox(w, i);
+
+          if (testState.punctuation && Math.random() < 0.22) {
+            if (Math.random() < 0.5) w = w.charAt(0).toUpperCase() + w.slice(1);
+            const punc = [',', '.', '!', '?', ';'];
+            w += punc[Math.floor(Math.random() * punc.length)];
+          }
+          if (testState.numbers && Math.random() < 0.16) {
+            w = String(Math.floor(Math.random() * 999));
+          }
+          list.push(w);
+        }
+      }
+      return list;
+    }
+
+    function renderWordsToDOM() {
+      const wrapper = document.getElementById('wordsWrapper');
+      wrapper.innerHTML = '';
+      wrapper.style.transform = 'translateY(0px)';
+
+      testState.words.forEach((word, wIdx) => {
+        const wordEl = document.createElement('div');
+        wordEl.className = 'word';
+        wordEl.dataset.index = wIdx;
+
+        for (let cIdx = 0; cIdx < word.length; cIdx++) {
+          const span = document.createElement('span');
+          span.className = 'letter';
+          span.textContent = word[cIdx];
+          wordEl.appendChild(span);
+        }
+        wrapper.appendChild(wordEl);
+      });
+
+      updateCaretPosition();
+    }
+
+    function updateWordDOM(wIdx) {
+      const wrapper = document.getElementById('wordsWrapper');
+      const wordEl = wrapper.children[wIdx];
+      if (!wordEl) return;
+
+      const target = testState.words[wIdx] || '';
+      const typed = wIdx === testState.currentWordIndex
+        ? testState.currentInput
+        : (testState.typedHistory[wIdx] || '');
+
+      const isBlind = settings.blindMode === 'on';
+      wordEl.innerHTML = '';
+
+      for (let i = 0; i < target.length; i++) {
+        const span = document.createElement('span');
+        span.className = 'letter';
+        span.textContent = target[i];
+
+        if (i < typed.length) {
+          if (settings.typedEffect === 'dots') {
+            span.textContent = '•';
+          }
+          if (typed[i] === target[i] || isBlind) {
+            span.classList.add('correct');
+          } else {
+            span.classList.add('incorrect');
+            if (settings.indicateTypos === 'replace') {
+              span.textContent = typed[i];
+            }
+          }
+          if (settings.typedEffect === 'hide') {
+            span.style.opacity = '0';
+          } else if (settings.typedEffect === 'fade') {
+            span.style.opacity = '0.35';
+          }
+        }
+        wordEl.appendChild(span);
+      }
+
+      // Extra characters beyond target word length
+      if (typed.length > target.length && settings.hideExtraLetters !== 'on') {
+        const extras = typed.slice(target.length);
+        for (let c of extras) {
+          const span = document.createElement('span');
+          span.className = 'letter extra';
+          span.textContent = c;
+          wordEl.appendChild(span);
+        }
+      }
+
+      // Underline word if skipped with error
+      if (wIdx < testState.currentWordIndex && typed !== target && !isBlind) {
+        wordEl.classList.add('error-underline');
+      } else {
+        wordEl.classList.remove('error-underline');
+      }
+    }
+
+    function updateCaretPosition() {
+      const caret = document.getElementById('caret');
+      const wrapper = document.getElementById('wordsWrapper');
+      const activeWordEl = wrapper.children[testState.currentWordIndex];
+      if (!activeWordEl) return;
+
+      const typedLen = testState.currentInput.length;
+      const letters = activeWordEl.children;
+
+      let left = activeWordEl.offsetLeft;
+      let top = activeWordEl.offsetTop;
+
+      if (typedLen === 0) {
+        left = activeWordEl.offsetLeft;
+      } else if (typedLen <= letters.length) {
+        const prevLetter = letters[typedLen - 1];
+        left = activeWordEl.offsetLeft + prevLetter.offsetLeft + prevLetter.offsetWidth;
+      } else if (letters.length > 0) {
+        const lastLetter = letters[letters.length - 1];
+        left = activeWordEl.offsetLeft + lastLetter.offsetLeft + lastLetter.offsetWidth;
+      }
+
+      // Line scrolling logic (keep active word on middle line)
+      const lineHeight = activeWordEl.offsetHeight + 8;
+      let scrollOffset = 0;
+      if (top > lineHeight * 1.4 && settings.showAllLines !== 'on') {
+        scrollOffset = top - lineHeight;
+        wrapper.style.transform = `translateY(-${scrollOffset}px)`;
+      } else {
+        wrapper.style.transform = 'translateY(0px)';
+      }
+
+      caret.style.left = `${left}px`;
+      caret.style.top = `${top - scrollOffset + 3}px`;
+    }
+
+    function startTestTimer() {
+      if (testState.isRunning) return;
+      testState.isRunning = true;
+      testState.startTime = Date.now();
+      testState.lastWordStartTime = Date.now();
+      document.getElementById('caret').classList.remove('caret-blink');
+
+      testState.timerInterval = setInterval(() => {
+        const elapsedSec = (Date.now() - testState.startTime) / 1000;
+        testState.timeElapsed = elapsedSec;
+
+        const isTimedCustom = testState.mode === 'custom' && testState.customConfig.limitTime > 0;
+        const activeDuration = isTimedCustom ? testState.customConfig.limitTime : testState.amount;
+
+        if (testState.mode === 'time' || isTimedCustom) {
+          testState.timeRemaining = Math.max(0, activeDuration - Math.floor(elapsedSec));
+          document.getElementById('liveTimer').textContent = testState.timeRemaining;
+
+          // Progress bar
+          const pct = Math.min(100, (elapsedSec / activeDuration) * 100);
+          document.getElementById('liveProgressBar').style.width = `${pct}%`;
+
+          if (testState.timeRemaining <= 0) {
+            finishTest();
+            return;
+          }
+        } else {
+          document.getElementById('liveTimer').textContent = `${testState.currentWordIndex}/${testState.words.length}`;
+          const pct = Math.min(100, (testState.currentWordIndex / testState.words.length) * 100);
+          document.getElementById('liveProgressBar').style.width = `${pct}%`;
+        }
+
+        // Calculate Live WPM & Accuracy
+        const stats = calculateCurrentStats();
+        testState.wpmHistory.push(stats.wpm);
+        document.getElementById('liveWpm').innerHTML = `${stats.wpm} <span class="text-xs font-normal opacity-75">${settings.typingSpeedUnit}</span>`;
+        document.getElementById('liveAcc').innerHTML = `${stats.acc}% <span class="text-xs font-normal opacity-75">acc</span>`;
+        document.getElementById('liveBurst').innerHTML = `${testState.lastBurstWpm} <span class="text-xs font-normal opacity-75">burst</span>`;
+      }, 1000);
+    }
+
+    function calculateCurrentStats() {
+      const elapsedMin = Math.max(0.02, (Date.now() - (testState.startTime || Date.now())) / 60000);
+      const rawWpm = Math.round((testState.totalKeystrokes / 5) / elapsedMin);
+      const netWpm = Math.round((testState.correctKeystrokes / 5) / elapsedMin);
+      const acc = testState.totalKeystrokes > 0
+        ? Math.max(0, Math.round((testState.correctKeystrokes / testState.totalKeystrokes) * 100))
+        : 100;
+
+      // Unit conversion
+      let displaySpeed = netWpm;
+      if (settings.typingSpeedUnit === 'cpm') displaySpeed = netWpm * 5;
+      else if (settings.typingSpeedUnit === 'wps') displaySpeed = (netWpm / 60).toFixed(1);
+      else if (settings.typingSpeedUnit === 'cps') displaySpeed = ((netWpm * 5) / 60).toFixed(1);
+      else if (settings.typingSpeedUnit === 'wph') displaySpeed = netWpm * 60;
+
+      return { wpm: displaySpeed, netWpm, rawWpm, acc };
+    }
+
+    function finishTest() {
+      clearInterval(testState.timerInterval);
+      testState.isRunning = false;
+      testState.isFinished = true;
+
+      const stats = calculateCurrentStats();
+      document.getElementById('typingStage').classList.add('hidden');
+      const resStage = document.getElementById('resultsStage');
+      resStage.classList.remove('hidden');
+      resStage.classList.add('flex');
+
+      const showDec = settings.alwaysShowDecimalPlaces === 'on';
+      document.getElementById('resWpm').textContent = showDec ? Number(stats.netWpm).toFixed(2) : stats.netWpm;
+      document.getElementById('resAcc').textContent = `${stats.acc}%`;
+      document.getElementById('resRaw').textContent = stats.rawWpm;
+      document.getElementById('resType').innerHTML = `${testState.mode} ${testState.amount}<br>${settings.language}`;
+      document.getElementById('resChars').textContent = `${testState.correctKeystrokes}/${testState.errorKeystrokes}/0/0`;
+      document.getElementById('resTime').textContent = `${Math.max(1, Math.round(testState.timeElapsed))}s`;
+
+      drawResultsGraph();
+    }
+
+    function drawResultsGraph() {
+      const canvas = document.getElementById('resultsChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width - 32;
+      canvas.height = rect.height - 32;
+
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const data = testState.wpmHistory.length > 1 ? testState.wpmHistory : [35, 52, 64, 61, 70];
+      const maxVal = Math.max(...data, 60) * 1.15;
+      const styles = getComputedStyle(document.documentElement);
+      const mainColor = styles.getPropertyValue('--main-color').trim() || '#e2b714';
+      const subColor = styles.getPropertyValue('--sub-color').trim() || '#646669';
+
+      // Grid lines
+      ctx.strokeStyle = subColor;
+      ctx.globalAlpha = 0.2;
+      ctx.lineWidth = 1;
+      for (let i = 1; i <= 3; i++) {
+        const y = (h / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      // WPM Line
+      ctx.strokeStyle = mainColor;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      data.forEach((val, idx) => {
+        const x = (idx / Math.max(1, data.length - 1)) * (w - 20) + 10;
+        const y = h - (val / maxVal) * (h - 24) - 12;
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Points
+      ctx.fillStyle = mainColor;
+      data.forEach((val, idx) => {
+        const x = (idx / Math.max(1, data.length - 1)) * (w - 20) + 10;
+        const y = h - (val / maxVal) * (h - 24) - 12;
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    function restartTest() {
+      clearInterval(testState.timerInterval);
+      testState.words = generateWordsList();
+      testState.typedHistory = [];
+      testState.currentWordIndex = 0;
+      testState.currentInput = '';
+      testState.isRunning = false;
+      testState.isFinished = false;
+      testState.startTime = null;
+      testState.timeRemaining = testState.amount;
+      testState.timeElapsed = 0;
+      testState.wpmHistory = [];
+      testState.totalKeystrokes = 0;
+      testState.correctKeystrokes = 0;
+      testState.errorKeystrokes = 0;
+      testState.lastBurstWpm = 0;
+
+      document.getElementById('resultsStage').classList.add('hidden');
+      document.getElementById('resultsStage').classList.remove('flex');
+      document.getElementById('typingStage').classList.remove('hidden');
+
+      const isTimedCustom = testState.mode === 'custom' && testState.customConfig.limitTime > 0;
+      if (testState.mode === 'time') {
+        document.getElementById('liveTimer').textContent = testState.amount;
+      } else if (isTimedCustom) {
+        document.getElementById('liveTimer').textContent = testState.customConfig.limitTime;
+      } else {
+        document.getElementById('liveTimer').textContent = `0/${testState.words.length}`;
+      }
+      document.getElementById('liveProgressBar').style.width = '0%';
+      document.getElementById('caret').classList.add('caret-blink');
+
+      const input = document.getElementById('typing-input');
+      if (input) input.value = ' ';
+
+      renderWordsToDOM();
+      focusTypingInput();
+    }
+
+    function focusTypingInput() {
+      if (document.getElementById('testView').classList.contains('hidden')) return;
+      const input = document.getElementById('typing-input');
+      if (input) {
+        if (!input.value.startsWith(' ')) {
+          input.value = ' ' + (testState.currentInput || '');
+        }
+        input.focus({ preventScroll: true });
+        try {
+          const len = input.value.length;
+          input.setSelectionRange(len, len);
+        } catch (err) {}
+      }
+    }
+
+    /**************************************************************
+     * 7. INPUT HANDLING (DESKTOP + MOBILE VIRTUAL KEYBOARDS)
+     **************************************************************/
+    function advanceToNextWord(submitted) {
+      const input = document.getElementById('typing-input');
+      const targetWord = testState.words[testState.currentWordIndex] || '';
+
+      if (submitted.length === 0 && settings.strictSpace !== 'on') {
+        input.value = ' ';
+        return;
+      }
+
+      // Expert difficulty check: fail test if word has error
+      if (settings.difficulty === 'expert' && submitted !== targetWord) {
+        playSynthesizedSound(settings.playSoundOnError, true);
+        showToast('Test failed (Expert Difficulty)');
+        restartTest();
+        return;
+      }
+
+      // Stop on word error check
+      if (settings.stopOnError === 'word' && submitted !== targetWord) {
+        input.value = ' ' + submitted;
+        playSynthesizedSound(settings.playSoundOnError, true);
+        return;
+      }
+
+      // Word burst speed calculation
+      const wordDurMin = Math.max(0.005, (Date.now() - (testState.lastWordStartTime || Date.now())) / 60000);
+      testState.lastBurstWpm = Math.round((submitted.length / 5) / wordDurMin);
+      testState.lastWordStartTime = Date.now();
+
+      testState.typedHistory[testState.currentWordIndex] = submitted;
+      updateWordDOM(testState.currentWordIndex);
+
+      testState.currentWordIndex++;
+      testState.currentInput = '';
+      input.value = ' ';
+
+      playSynthesizedSound(settings.playSoundOnClick, false);
+
+      const isTimedCustom = testState.mode === 'custom' && testState.customConfig.limitTime > 0;
+
+      // Check if words/quote/custom test finished
+      if (testState.mode !== 'time' && !isTimedCustom && testState.currentWordIndex >= testState.words.length) {
+        finishTest();
+        return;
+      }
+
+      // Add more words dynamically in time/zen/timed-custom mode
+      if ((testState.mode === 'time' || testState.mode === 'zen' || isTimedCustom) && testState.words.length - testState.currentWordIndex < 35) {
+        const more = generateWordsList().slice(0, 30);
+        const wrapper = document.getElementById('wordsWrapper');
+        more.forEach((w) => {
+          const newIdx = testState.words.length;
+          testState.words.push(w);
+          const wordEl = document.createElement('div');
+          wordEl.className = 'word';
+          wordEl.dataset.index = newIdx;
+          for (let c of w) {
+            const span = document.createElement('span');
+            span.className = 'letter';
+            span.textContent = c;
+            wordEl.appendChild(span);
+          }
+          wrapper.appendChild(wordEl);
+        });
+      }
+
+      updateCaretPosition();
+    }
+
+    function setupTypingListeners() {
+      const input = document.getElementById('typing-input');
+      const pill = document.getElementById('focusHelperPill');
+
+      // Show/Hide focus indicator pill
+      input.addEventListener('focus', () => {
+        if (pill) pill.style.opacity = '0.25';
+        if (!input.value.startsWith(' ')) {
+          input.value = ' ' + testState.currentInput;
+        }
+      });
+
+      input.addEventListener('blur', () => {
+        if (pill) pill.style.opacity = '1';
+      });
+
+      // Clicking anywhere in typing stage focuses the input
+      document.getElementById('typingStage').addEventListener('click', (e) => {
+        if (!e.target.closest('button')) {
+          focusTypingInput();
+        }
+      });
+
+      // Primary Input handler (works on Android Gboard, SwiftKey, iOS, and Desktop)
+      // We keep a leading sentinel space ' ' in input.value so mobile virtual keyboards
+      // always emit a deletion when Backspace is tapped at the start of a word.
+      input.addEventListener('input', () => {
+        if (testState.isFinished) return;
+
+        let rawVal = input.value;
+
+        // Detect if the leading sentinel space was deleted (Backspace at beginning of word on mobile/desktop)
+        if (!rawVal.startsWith(' ')) {
+          if (testState.currentInput.length === 0 && testState.currentWordIndex > 0 && settings.confidenceMode === 'off') {
+            const prevIdx = testState.currentWordIndex - 1;
+            const prevTyped = testState.typedHistory[prevIdx] || '';
+            const prevTarget = testState.words[prevIdx] || '';
+            if (settings.freedomMode === 'on' || prevTyped !== prevTarget) {
+              testState.currentWordIndex = prevIdx;
+              testState.currentInput = prevTyped;
+              input.value = ' ' + prevTyped;
+              updateWordDOM(prevIdx);
+              updateCaretPosition();
+              return;
+            }
+          }
+          // Restore sentinel space
+          rawVal = ' ' + rawVal;
+          input.value = rawVal;
+        }
+
+        const val = rawVal.slice(1); // Actual current word input without sentinel
+
+        if (!testState.isRunning && val.length > 0) {
+          startTestTimer();
+        }
+
+        const targetWord = testState.words[testState.currentWordIndex] || '';
+
+        // If user typed a space (even in the middle or end on mobile keyboard)
+        if (val.includes(' ')) {
+          const parts = val.split(' ');
+          const submitted = parts[0];
+          advanceToNextWord(submitted);
+          // If mobile keyboard auto-inserted characters after space, process them into the new word
+          const remainder = parts.slice(1).join('');
+          if (remainder.length > 0 && !testState.isFinished) {
+            testState.currentInput = remainder;
+            input.value = ' ' + remainder;
+            updateWordDOM(testState.currentWordIndex);
+            updateCaretPosition();
+          }
+          return;
+        }
+
+        // Character typed or deleted
+        const isAdding = val.length > testState.currentInput.length;
+        if (isAdding) {
+          const addedChars = val.slice(testState.currentInput.length);
+          for (let i = 0; i < addedChars.length; i++) {
+            const charPos = testState.currentInput.length + i;
+            const newChar = addedChars[i];
+            const expectedChar = targetWord[charPos];
+            testState.totalKeystrokes++;
+
+            if (newChar === expectedChar) {
+              testState.correctKeystrokes++;
+              playSynthesizedSound(settings.playSoundOnClick, false);
+            } else {
+              testState.errorKeystrokes++;
+              if (settings.playSoundOnError !== 'off') {
+                playSynthesizedSound(settings.playSoundOnError, true);
+              } else {
+                playSynthesizedSound(settings.playSoundOnClick, false);
+              }
+
+              // Master difficulty: fail immediately on single wrong key
+              if (settings.difficulty === 'master') {
+                showToast('Test failed (Master Difficulty - 100% accuracy required)');
+                restartTest();
+                return;
+              }
+
+              // Stop on letter error
+              if (settings.stopOnError === 'letter') {
+                input.value = ' ' + testState.currentInput;
+                return;
+              }
+            }
+            highlightKeymapKey(newChar);
+          }
+        } else if (val.length < testState.currentInput.length) {
+          // Backspace confidence mode max check
+          if (settings.confidenceMode === 'max') {
+            input.value = ' ' + testState.currentInput;
+            return;
+          }
+          playSynthesizedSound(settings.playSoundOnClick, false);
+        }
+
+        testState.currentInput = val;
+        input.value = ' ' + val;
+        updateWordDOM(testState.currentWordIndex);
+
+        // Quick End check on last word
+        if (
+          settings.quickEnd === 'on' &&
+          testState.mode !== 'time' &&
+          testState.currentWordIndex === testState.words.length - 1 &&
+          val.length === targetWord.length
+        ) {
+          finishTest();
+          return;
+        }
+
+        updateCaretPosition();
+      });
+
+      // Global Keyboard Shortcuts & Desktop Immediate Key Forwarding
+      window.addEventListener('keydown', (e) => {
+        // Caps Lock Indicator
+        if (e.getModifierState && settings.capsLockWarning === 'show') {
+          const capsOn = e.getModifierState('CapsLock');
+          document.getElementById('capsWarning').classList.toggle('hidden', !capsOn);
+          document.getElementById('capsWarning').classList.toggle('flex', capsOn);
+        }
+
+        // Command Line: Ctrl+Shift+P or Escape
+        const customModalOpen = !document.getElementById('custom-text-modal').classList.contains('hidden');
+        if (e.key === 'Escape' && customModalOpen) {
+          e.preventDefault();
+          closeCustomTextModal();
+          return;
+        }
+        if ((e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'p') || (e.key === 'Escape' && document.getElementById('commandLineModal').classList.contains('hidden'))) {
+          e.preventDefault();
+          openCommandLine();
+          return;
+        } else if (e.key === 'Escape') {
+          closeCommandLine();
+          return;
+        }
+
+        // Quick Restart via Tab
+        if (e.key === 'Tab' && !customModalOpen) {
+          e.preventDefault();
+          restartTest();
+          return;
+        }
+
+        // Ignore if not on Test view or if modal/search input is focused
+        const onTestView = !document.getElementById('testView').classList.contains('hidden');
+        const modalOpen = !document.getElementById('commandLineModal').classList.contains('hidden') || customModalOpen;
+        const activeTag = document.activeElement ? document.activeElement.tagName : '';
+        if (!onTestView || modalOpen) return;
+        if ((activeTag === 'INPUT' || activeTag === 'TEXTAREA') && document.activeElement !== input) return;
+
+        // If user starts typing on desktop while input isn't focused yet, focus it immediately
+        if (document.activeElement !== input && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          focusTypingInput();
+        }
+      });
+    }
+
+    /**************************************************************
+     * 8. TEST CONFIG BAR CONTROLS
+     **************************************************************/
+    function toggleModifier(mod) {
+      testState[mod] = !testState[mod];
+      const btn = document.getElementById(mod === 'punctuation' ? 'modPunctuation' : 'modNumbers');
+      btn.style.color = testState[mod] ? 'var(--main-color)' : '';
+      restartTest();
+    }
+
+    function setTestMode(mode) {
+      testState.mode = mode;
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        const active = btn.dataset.mode === mode;
+        btn.style.color = active ? 'var(--main-color)' : '';
+        btn.classList.toggle('font-bold', active);
+      });
+
+      const subBar = document.getElementById('subConfigBar');
+      const customBar = document.getElementById('customChangeBar');
+      const div = document.getElementById('subConfigDivider');
+
+      if (mode === 'custom') {
+        subBar.classList.add('hidden');
+        customBar.classList.remove('hidden');
+        customBar.classList.add('flex');
+        div.classList.remove('hidden');
+      } else if (mode === 'quote' || mode === 'zen') {
+        subBar.classList.add('hidden');
+        customBar.classList.add('hidden');
+        customBar.classList.remove('flex');
+        div.classList.add('hidden');
+      } else {
+        subBar.classList.remove('hidden');
+        customBar.classList.add('hidden');
+        customBar.classList.remove('flex');
+        div.classList.remove('hidden');
+      }
+      restartTest();
+    }
+
+    function setTestAmount(amt) {
+      testState.amount = amt;
+      document.querySelectorAll('.amount-btn').forEach(btn => {
+        const active = parseInt(btn.dataset.amount) === amt;
+        btn.style.color = active ? 'var(--main-color)' : '';
+        btn.classList.toggle('font-bold', active);
+      });
+      restartTest();
+    }
+
+    function promptCustomAmount() {
+      const next = testState.amount === 30 ? 45 : 30;
+      setTestAmount(next);
+      showToast(`Set duration/words to ${next}`);
+    }
+
+    /**************************************************************
+     * 8B. CUSTOM TEXT MODAL LOGIC (Matches User Screenshot)
+     **************************************************************/
+    function openCustomTextModal() {
+      const modal = document.getElementById('custom-text-modal');
+      const area = document.getElementById('customTextArea');
+      area.value = testState.customConfig.text;
+      document.getElementById('customLimitWords').value = testState.customConfig.limitWords || '';
+      document.getElementById('customLimitTime').value = testState.customConfig.limitTime || '';
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      setTimeout(() => {
+        area.focus();
+        area.setSelectionRange(area.value.length, area.value.length);
+      }, 40);
+    }
+
+    function closeCustomTextModal() {
+      const modal = document.getElementById('custom-text-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      focusTypingInput();
+    }
+
+    function setCustomTextMode(cmode) {
+      testState.customConfig.mode = cmode;
+      document.querySelectorAll('.custom-mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.cmode === cmode);
+      });
+    }
+
+    function setCustomDelimiter(delim) {
+      testState.customConfig.delimiter = delim;
+      document.querySelectorAll('.custom-delim-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.cdelim === delim);
+      });
+      const area = document.getElementById('customTextArea');
+      if (delim === 'pipe' && !area.value.includes('|')) {
+        area.value = area.value.trim().split(/\s+/).join('|');
+      } else if (delim === 'space' && area.value.includes('|')) {
+        area.value = area.value.split('|').join(' ');
+      }
+    }
+
+    function handleCustomFileUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById('customTextArea').value = e.target.result || '';
+        showToast(`Loaded ${file.name}`);
+      };
+      reader.readAsText(file);
+    }
+
+    function filterCustomWordsPrompt() {
+      const area = document.getElementById('customTextArea');
+      const words = area.value.split(/\s+/).filter(w => w.length >= 3);
+      area.value = words.join(' ');
+      showToast('Filtered out short words (< 3 letters)');
+    }
+
+    function generateRandomCustomSample() {
+      const bank = WORD_BANKS[settings.language] || WORD_BANKS.english;
+      const sample = [];
+      for (let i = 0; i < 25; i++) {
+        sample.push(bank[Math.floor(Math.random() * bank.length)]);
+      }
+      const sep = testState.customConfig.delimiter === 'pipe' ? '|' : ' ';
+      document.getElementById('customTextArea').value = sample.join(sep);
+      showToast('Generated 25 custom words');
+    }
+
+    function applyCustomTextTransform(type) {
+      const area = document.getElementById('customTextArea');
+      let txt = area.value;
+      if (type === 'zeroWidth') {
+        txt = txt.replace(/[\u200B-\u200D\uFEFF]/g, '');
+        showToast('Removed zero-width characters');
+      } else if (type === 'fancyTypography') {
+        txt = txt
+          .replace(/[\u2018\u2019\u201A\u201B]/g, "'")
+          .replace(/[\u201C\u201D\u201E\u201F]/g, '"')
+          .replace(/[\u2013\u2014]/g, '-')
+          .replace(/\u2026/g, '...');
+        showToast('Standardised fancy typography');
+      } else if (type === 'controlChars') {
+        txt = txt.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+        showToast('Replaced control characters');
+      } else if (type === 'newlineSpace') {
+        txt = txt.replace(/\r?\n+/g, ' ').replace(/\s+/g, ' ').trim();
+        showToast('Replaced newlines with spaces');
+      } else if (type === 'newlinePeriodSpace') {
+        txt = txt
+          .split(/\r?\n+/)
+          .map(line => line.trim())
+          .filter(Boolean)
+          .map(line => /[.!?]$/.test(line) ? line : line + '.')
+          .join(' ');
+        showToast('Replaced newlines with period + space');
+      }
+      area.value = txt;
+    }
+
+    function saveCurrentCustomText() {
+      const txt = document.getElementById('customTextArea').value.trim();
+      if (!txt) return;
+      const saved = JSON.parse(localStorage.getItem('mt_saved_custom_texts') || '[]');
+      saved.unshift(txt);
+      localStorage.setItem('mt_saved_custom_texts', JSON.stringify(saved.slice(0, 10)));
+      showToast('Custom text saved!');
+    }
+
+    function loadSavedCustomText() {
+      const saved = JSON.parse(localStorage.getItem('mt_saved_custom_texts') || '[]');
+      if (saved.length === 0) {
+        showToast('No saved custom texts yet');
+        return;
+      }
+      document.getElementById('customTextArea').value = saved[0];
+      showToast('Loaded last saved custom text');
+    }
+
+    function applyAndCloseCustomTextModal() {
+      const txt = document.getElementById('customTextArea').value.trim();
+      const lWords = parseInt(document.getElementById('customLimitWords').value) || 0;
+      const lTime = parseInt(document.getElementById('customLimitTime').value) || 0;
+
+      testState.customConfig.text = txt || 'The quick brown fox jumps over the lazy dog';
+      testState.customConfig.limitWords = lWords;
+      testState.customConfig.limitTime = lTime;
+
+      closeCustomTextModal();
+      restartTest();
+      showToast('Custom text applied');
+    }
+
+    /**************************************************************
+     * 9. APPLY VISUAL & THEME SETTINGS TO DOM
+     **************************************************************/
+    function applyVisualSettings() {
+      const root = document.documentElement;
+      const themeObj = THEMES.find(t => t.name === settings.theme) || THEMES.find(t => t.name === 'serika dark');
+
+      if (themeObj) {
+        root.style.setProperty('--bg-color', themeObj.bg);
+        root.style.setProperty('--sub-alt-color', themeObj.subAlt);
+        root.style.setProperty('--main-color', themeObj.main);
+        root.style.setProperty('--text-color', themeObj.text);
+        root.style.setProperty('--sub-color', themeObj.sub);
+      }
+
+      // Font Family & Font Size
+      const fontName = settings.fontFamily === 'custom' ? 'Roboto Mono' : settings.fontFamily;
+      root.style.setProperty('--font-family', `'${fontName}', monospace, sans-serif`);
+
+      const viewport = document.getElementById('wordsViewport');
+      const sizeScale = parseFloat(settings.fontSize) || 2;
+      const remSize = Math.max(1.1, Math.min(3.0, sizeScale * 0.72));
+      if (viewport) {
+        viewport.style.fontSize = `${remSize}rem`;
+        viewport.style.height = settings.showAllLines === 'on' ? 'auto' : `${remSize * 4.8}rem`;
+      }
+
+      // Caret Style & Smoothness
+      const caret = document.getElementById('caret');
+      if (caret) {
+        caret.className = `style-${settings.caretStyle} ${testState.isRunning ? '' : 'caret-blink'}`;
+        caret.style.display = settings.caretStyle === 'off' ? 'none' : 'block';
+        const durMap = { off: '0s', slow: '0.16s', medium: '0.09s', fast: '0.04s' };
+        const dur = durMap[settings.smoothCaret] || '0.09s';
+        caret.style.transition = `left ${dur} ease, top ${dur} ease`;
+      }
+
+      // Colorful & Flip Test Colors
+      document.body.classList.toggle('colorful-mode', settings.colorfulMode === 'on');
+      document.body.classList.toggle('flip-colors', settings.flipTestColors === 'on');
+
+      // Funbox CSS classes
+      document.body.classList.remove(
+        'funbox-mirror', 'funbox-upside_down', 'funbox-nausea',
+        'funbox-round_round_baby', 'funbox-earthquake', 'funbox-crt'
+      );
+      if (settings.funbox && settings.funbox !== 'none') {
+        const cls = 'funbox-' + settings.funbox.replace(/\s+/g, '_');
+        document.body.classList.add(cls);
+      }
+
+      // Active Funbox & Language Badges
+      const langLbl = document.getElementById('currentLangLabel');
+      if (langLbl) langLbl.textContent = settings.language;
+
+      const fbBadge = document.getElementById('activeFunboxBadge');
+      if (fbBadge) {
+        if (settings.funbox && settings.funbox !== 'none') {
+          fbBadge.textContent = settings.funbox;
+          fbBadge.classList.remove('hidden');
+        } else {
+          fbBadge.classList.add('hidden');
+        }
+      }
+
+      // Live Telemetry Visibility & Timer Color/Opacity
+      const liveTimer = document.getElementById('liveTimer');
+      const liveBarWrap = document.getElementById('liveProgressBarWrap');
+      if (liveTimer && liveBarWrap) {
+        liveTimer.classList.toggle('hidden', settings.liveProgressStyle === 'off' || settings.liveProgressStyle === 'bar');
+        liveBarWrap.classList.toggle('hidden', settings.liveProgressStyle !== 'bar');
+      }
+      document.getElementById('liveWpm')?.classList.toggle('hidden', settings.liveSpeedStyle === 'off');
+      document.getElementById('liveAcc')?.classList.toggle('hidden', settings.liveAccuracyStyle === 'off');
+      document.getElementById('liveBurst')?.classList.toggle('hidden', settings.liveWordBurstStyle === 'off');
+
+      const statsRow = document.getElementById('liveStatsRow');
+      if (statsRow) {
+        const colorMap = {
+          black: '#111111',
+          sub: 'var(--sub-color)',
+          text: 'var(--text-color)',
+          main: 'var(--main-color)'
+        };
+        statsRow.style.color = colorMap[settings.timerColor] || 'var(--main-color)';
+        statsRow.style.opacity = settings.timerOpacity || '1';
+      }
+
+      // Key Tips Visibility
+      const keyTips = document.getElementById('footerKeyTips');
+      if (keyTips) keyTips.classList.toggle('hidden', settings.showKeyTips === 'hide');
+
+      // Keymap Visibility
+      const km = document.getElementById('keymapContainer');
+      if (km) {
+        km.classList.toggle('hidden', settings.keymapMode === 'off');
+        km.classList.toggle('flex', settings.keymapMode !== 'off');
+      }
+
+      // Footer Theme Name
+      const fTheme = document.getElementById('footerThemeName');
+      if (fTheme) fTheme.textContent = settings.theme;
+    }
+
+    /**************************************************************
+     * 10. EXHAUSTIVE SETTINGS VIEW BUILDER (All 8 Sections)
+     **************************************************************/
+    function buildSettingsPage() {
+      const container = document.getElementById('settingsSectionsContainer');
+      if (!container) return;
+
+      container.innerHTML = `
+        <!-- ============================================== -->
+        <!-- SECTION 1: BEHAVIOR (Matches 2141 & 2142)      -->
+        <!-- ============================================== -->
+        <div id="sec-behavior" class="setting-section space-y-6">
+          <button onclick="toggleSectionCollapse('body-behavior', this)" class="flex items-center gap-2.5 text-xl sm:text-2xl font-bold mt-sub hover:text-[var(--text-color)]">
+            <i class="fa-solid fa-chevron-down text-base transition-transform"></i>
+            <span>behavior</span>
+          </button>
+
+          <div id="body-behavior" class="space-y-6">
+            ${renderToggleSetting(
+              'difficulty', 'fa-star',
+              'Normal is the classic typing test experience. Expert fails the test if you submit (press space) an incorrect word. Master fails if you press a single incorrect key (meaning you have to achieve 100% accuracy).',
+              'difficulty', ['normal', 'expert', 'master']
+            )}
+
+            ${renderToggleSetting(
+              'quick restart', 'fa-rotate-right',
+              'Press tab, esc or enter to quickly restart the test, or to quickly jump to the test page. These options disable tab navigation on most parts of the website. Using the "esc" option will move opening the commandline to the tab key.',
+              'quickRestart', ['off', 'esc', 'tab', 'enter']
+            )}
+
+            ${renderToggleSetting(
+              'repeat quotes', 'fa-repeat',
+              'This setting changes the restarting behavior when typing in quote mode. Changing it to \'typing\' will repeat the quote if you restart while typing.',
+              'repeatQuotes', ['off', 'typing']
+            )}
+
+            ${renderToggleSetting(
+              'blind mode', 'fa-eye-slash',
+              'No errors or incorrect words are highlighted. Helps you to focus on raw speed. If enabled, quick end is recommended.',
+              'blindMode', ['off', 'on']
+            )}
+
+            ${renderToggleSetting(
+              'always show words history', 'fa-align-left',
+              'This option will automatically show the words history at the end of the test. Can cause slight lag with a lot of words.',
+              'alwaysShowWordsHistory', ['off', 'on']
+            )}
+
+            ${renderToggleSetting(
+              'single list command line', 'fa-list',
+              'When enabled, it will show the command line with all commands in a single list instead of submenu arrangements. Selecting \'manual\' will expose all commands only after typing >.',
+              'singleListCommandLine', ['manual', 'on']
+            )}
+
+            ${renderNumberAndToggleSetting(
+              'min speed', 'fa-gauge-simple',
+              'Automatically fails a test if your speed falls below a threshold.',
+              'minSpeedVal', 'minSpeed', ['off', 'custom']
+            )}
+
+            ${renderNumberAndToggleSetting(
+              'min accuracy', 'fa-bullseye',
+              'Automatically fails a test if your accuracy falls below a threshold.',
+              'minAccuracyVal', 'minAccuracy', ['off', 'custom']
+            )}
+
+            ${renderNumberAndToggleSetting(
+              'min word burst', 'fa-bolt',
+              'Automatically fails a test if your raw for a single word falls below this threshold. Selecting \'flex\' allows for this threshold to automatically decrease for longer words.',
+              'minWordBurstVal', 'minWordBurst', ['off', 'fixed', 'flex']
+            )}
+
+            ${renderToggleSetting(
+              'british english', 'fa-language',
+              'When enabled, the website will use the British spelling instead of American. Note that this might not replace all words correctly.',
+              'britishEnglish', ['off', 'on']
+            )}
+
+            <!-- Language Dropdown -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-center" data-title="language">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-earth-americas text-xs"></i><span>language</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">Change in which language you want to type.</p>
+              </div>
+              <div class="md:col-span-5">
+                <select onchange="updateSetting('language', this.value, true)" class="w-full mt-input cursor-pointer">
+                  ${['english', 'spanish', 'french', 'german', 'hindi'].map(l =>
+                    `<option value="${l}" ${settings.language === l ? 'selected' : ''}>${l}</option>`
+                  ).join('')}
+                </select>
+              </div>
+            </div>
+
+            <!-- Funbox 3-Column Grid (48 Modes) -->
+            <div class="setting-row space-y-3" data-title="funbox">
+              <div class="space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-gamepad text-xs"></i><span>funbox</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">These are special modes that change the website in some special way (by altering the word generation, behavior of the website or the looks). Give each one of them a try!</p>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                ${FUNBOX_MODES.map(mode => {
+                  const active = settings.funbox === mode;
+                  let label = mode;
+                  if (mode === 'mirror') label = 'ɿoɿɿim';
+                  if (mode === 'upside down') label = 'uʍop ǝpısdn';
+                  return `<button onclick="toggleFunbox('${mode}')" class="mt-btn ${active ? 'active' : ''} truncate">${label}</button>`;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- Custom Layoutfluid Multi-Tags -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-center" data-title="custom layoutfluid">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-droplet text-xs"></i><span>custom layoutfluid</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">Select which layouts you want the layoutfluid funbox to cycle through.</p>
+              </div>
+              <div class="md:col-span-5 mt-sub-alt rounded-lg p-2 flex flex-wrap items-center justify-between gap-1.5">
+                <div class="flex flex-wrap gap-1.5">
+                  ${settings.layoutfluidTags.map(tag => `
+                    <span class="px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1.5" style="background-color: var(--main-color); color: var(--bg-color);">
+                      <span>${tag}</span><i class="fa-solid fa-xmark text-[10px] cursor-pointer"></i>
+                    </span>
+                  `).join('')}
+                </div>
+                <i class="fa-solid fa-chevron-down text-xs mt-sub pr-1"></i>
+              </div>
+            </div>
+
+            <!-- Polyglot Languages Multi-Tags -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-center" data-title="polyglot languages">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-language text-xs"></i><span>polyglot languages</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">Select which languages you want the polyglot funbox to use.</p>
+              </div>
+              <div class="md:col-span-5 mt-sub-alt rounded-lg p-2 flex flex-wrap items-center justify-between gap-1.5">
+                <div class="flex flex-wrap gap-1.5">
+                  ${settings.polyglotTags.map(tag => `
+                    <span class="px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1.5" style="background-color: var(--main-color); color: var(--bg-color);">
+                      <span>${tag}</span><i class="fa-solid fa-xmark text-[10px] cursor-pointer"></i>
+                    </span>
+                  `).join('')}
+                </div>
+                <i class="fa-solid fa-chevron-down text-xs mt-sub pr-1"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- SECTION 2: INPUT (Matches 2143 & 2144)         -->
+        <!-- ============================================== -->
+        <div id="sec-input" class="setting-section space-y-6">
+          <button onclick="toggleSectionCollapse('body-input', this)" class="flex items-center gap-2.5 text-xl sm:text-2xl font-bold mt-sub hover:text-[var(--text-color)]">
+            <i class="fa-solid fa-chevron-down text-base transition-transform"></i>
+            <span>input</span>
+          </button>
+
+          <div id="body-input" class="space-y-6">
+            ${renderToggleSetting(
+              'freedom mode', 'fa-feather',
+              'Allows you to delete any word, even if it was typed correctly.',
+              'freedomMode', ['off', 'on']
+            )}
+
+            ${renderToggleSetting(
+              'strict space', 'fa-minus',
+              'Pressing space at the beginning of a word will insert a space character when this mode is enabled.',
+              'strictSpace', ['off', 'on']
+            )}
+
+            ${renderToggleSetting(
+              'opposite shift mode', 'fa-arrows-left-right',
+              'This mode will force you to use opposite shift keys for shifting. Using an incorrect one will count as an error.',
+              'oppositeShiftMode', ['off', 'on', 'keymap']
+            )}
+
+            ${renderToggleSetting(
+              'stop on error', 'fa-hand',
+              'Letter mode will stop input when pressing any incorrect letters. Word mode will not allow you to continue to the next word until you correct all mistakes.',
+              'stopOnError', ['off', 'word', 'letter']
+            )}
+
+            ${renderToggleSetting(
+              'delete on error', 'fa-delete-left',
+              'Letter mode will automatically delete the incorrect character and the one before it. Word mode will delete the entire current word.',
+              'deleteOnError', ['off', 'letter', 'letter hard', 'word', 'word hard']
+            )}
+
+            ${renderToggleSetting(
+              'confidence mode', 'fa-backspace',
+              'When enabled, you will not be able to go back to previous words to fix mistakes. When turned up to the max, you won\'t be able to backspace at all.',
+              'confidenceMode', ['off', 'on', 'max']
+            )}
+
+            ${renderToggleSetting(
+              'quick end', 'fa-forward-step',
+              'This only applies to the words mode - when enabled, the test will end as soon as the last word has been typed, even if it\'s incorrect.',
+              'quickEnd', ['off', 'on']
+            )}
+
+            ${renderToggleSetting(
+              'indicate typos', 'fa-exclamation',
+              'Shows typos that you\'ve made. "Below" shows what you typed below the letters, "replace" will replace the letters with the ones you typed.',
+              'indicateTypos', ['off', 'below', 'replace', 'both']
+            )}
+
+            ${renderToggleSetting(
+              'hide extra letters', 'fa-eye-slash',
+              'Hides extra letters. This will completely avoid words jumping lines (due to changing width), but might feel a bit confusing when you press a key and nothing happens.',
+              'hideExtraLetters', ['off', 'on']
+            )}
+
+            ${renderToggleSetting(
+              'composition display', 'fa-language',
+              'Change how composition is displayed. "off" will just underline the letter if composition is active. "replace" will replace the letter in the test.',
+              'compositionDisplay', ['off', 'below', 'replace']
+            )}
+
+            ${renderToggleSetting(
+              'lazy mode', 'fa-couch',
+              'Replaces accents / diacritics / special characters with their normal letter equivalents.',
+              'lazyMode', ['off', 'on']
+            )}
+
+            <!-- Layout Dropdown -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-center" data-title="layout">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-keyboard text-xs"></i><span>layout</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">With this setting you can emulate other layouts. This setting is best kept off, as it can break things like dead keys and alt layers.</p>
+              </div>
+              <div class="md:col-span-5">
+                <select onchange="updateSetting('layout', this.value)" class="w-full mt-input cursor-pointer">
+                  ${['qwerty', 'dvorak', 'colemak', 'workman', 'azerty'].map(l =>
+                    `<option value="${l}" ${settings.layout === l ? 'selected' : ''}>${l}</option>`
+                  ).join('')}
+                </select>
+              </div>
+            </div>
+
+            ${renderToggleSetting(
+              'code unindent on backspace', 'fa-code',
+              'Automatically go back to the previous line when deleting line leading tab characters. Only works in code languages.',
+              'codeUnindentOnBackspace', ['off', 'on']
+            )}
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- SECTION 3: SOUND (Matches 2145)                -->
+        <!-- ============================================== -->
+        <div id="sec-sound" class="setting-section space-y-6">
+          <button onclick="toggleSectionCollapse('body-sound', this)" class="flex items-center gap-2.5 text-xl sm:text-2xl font-bold mt-sub hover:text-[var(--text-color)]">
+            <i class="fa-solid fa-chevron-down text-base transition-transform"></i>
+            <span>sound</span>
+          </button>
+
+          <div id="body-sound" class="space-y-6">
+            <!-- Sound Volume Slider -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-center" data-title="sound volume">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-volume-low text-xs"></i><span>sound volume</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">Change the volume of the sound effects.</p>
+              </div>
+              <div class="md:col-span-5 flex items-center gap-4">
+                <span id="volReadout" class="text-xs font-semibold w-8">${settings.soundVolume}</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value="${settings.soundVolume}"
+                  oninput="settings.soundVolume=this.value; document.getElementById('volReadout').textContent=this.value; saveSettings(); playSynthesizedSound(settings.playSoundOnClick === 'off' ? 'click' : settings.playSoundOnClick);"
+                />
+              </div>
+            </div>
+
+            <!-- Play Sound On Click 3-Column Grid -->
+            <div class="setting-row space-y-3" data-title="play sound on click">
+              <div class="space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-volume-high text-xs"></i><span>play sound on click</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">Plays a short sound when you press a key.</p>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                ${CLICK_SOUNDS.map(snd => `
+                  <button onclick="selectClickSound('${snd}')" class="mt-btn ${settings.playSoundOnClick === snd ? 'active' : ''} truncate">${snd}</button>
+                `).join('')}
+              </div>
+            </div>
+
+            ${renderToggleSetting(
+              'play sound on error', 'fa-volume-xmark',
+              'Plays a short sound if you press an incorrect key or press space too early.',
+              'playSoundOnError', ['off', 'damage', 'triangle', 'square', 'missed punch']
+            )}
+
+            ${renderToggleSetting(
+              'play time warning', 'fa-triangle-exclamation',
+              'Play a short warning sound if you are close to the end of a timed test.',
+              'playTimeWarning', ['off', '1 second', '3 seconds', '5 seconds', '10 seconds']
+            )}
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- SECTION 4: CARET (Matches 2145)                -->
+        <!-- ============================================== -->
+        <div id="sec-caret" class="setting-section space-y-6">
+          <button onclick="toggleSectionCollapse('body-caret', this)" class="flex items-center gap-2.5 text-xl sm:text-2xl font-bold mt-sub hover:text-[var(--text-color)]">
+            <i class="fa-solid fa-chevron-down text-base transition-transform"></i>
+            <span>caret</span>
+          </button>
+
+          <div id="body-caret" class="space-y-6">
+            ${renderToggleSetting(
+              'smooth caret', 'fa-i-cursor',
+              'The caret will move smoothly between letters and words.',
+              'smoothCaret', ['off', 'slow', 'medium', 'fast']
+            )}
+
+            ${renderToggleSetting(
+              'caret style', 'fa-i-cursor',
+              'Change the style of the caret during the test.',
+              'caretStyle', ['off', 'default', 'block', 'outline', 'underline']
+            )}
+
+            ${renderNumberAndToggleSetting(
+              'pace caret', 'fa-i-cursor',
+              'Displays a second caret that moves at constant speed. The \'average\' option averages the speed of last 10 results.',
+              'paceCaretVal', 'paceCaret', ['off', 'average', 'pb', 'tag pb', 'last', 'custom', 'daily']
+            )}
+
+            ${renderToggleSetting(
+              'repeated pace', 'fa-i-cursor',
+              'When repeating a test, a pace caret will automatically be enabled for one test with the speed of your previous test.',
+              'repeatedPace', ['off', 'on']
+            )}
+
+            ${renderToggleSetting(
+              'pace caret style', 'fa-i-cursor',
+              'Change the style of the pace caret during the test.',
+              'paceCaretStyle', ['off', 'default', 'block', 'outline', 'underline']
+            )}
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- SECTION 5: APPEARANCE (Matches 2146 & 2147)    -->
+        <!-- ============================================== -->
+        <div id="sec-appearance" class="setting-section space-y-6">
+          <button onclick="toggleSectionCollapse('body-appearance', this)" class="flex items-center gap-2.5 text-xl sm:text-2xl font-bold mt-sub hover:text-[var(--text-color)]">
+            <i class="fa-solid fa-chevron-down text-base transition-transform"></i>
+            <span>appearance</span>
+          </button>
+
+          <div id="body-appearance" class="space-y-6">
+            ${renderToggleSetting(
+              'live progress style', 'fa-clock',
+              'Change the style of the timer/word count during a test. "Flash" styles will briefly show the timer in timed modes every 15 seconds.',
+              'liveProgressStyle', ['off', 'bar', 'text', 'mini', 'flash text', 'flash mini']
+            )}
+
+            ${renderToggleSetting(
+              'live speed style', 'fa-gauge',
+              'Change the style of the live speed displayed during the test.',
+              'liveSpeedStyle', ['off', 'text', 'mini']
+            )}
+
+            ${renderToggleSetting(
+              'live accuracy style', 'fa-bullseye',
+              'Change the style of the live accuracy displayed during the test.',
+              'liveAccuracyStyle', ['off', 'text', 'mini']
+            )}
+
+            ${renderToggleSetting(
+              'live word burst style', 'fa-bolt',
+              'Change the style of the live burst speed displayed during the test.',
+              'liveWordBurstStyle', ['off', 'text', 'mini']
+            )}
+
+            ${renderToggleSetting(
+              'timer color', 'fa-clock',
+              'Change the color of the progress, live speed, accuracy and burst text.',
+              'timerColor', ['black', 'sub', 'text', 'main']
+            )}
+
+            ${renderToggleSetting(
+              'timer opacity', 'fa-clock',
+              'Change the opacity of the progress, live speed, burst and accuracy text.',
+              'timerOpacity', ['0.25', '0.5', '0.75', '1']
+            )}
+
+            ${renderToggleSetting(
+              'highlight mode', 'fa-highlighter',
+              'Change what is highlighted during the test.',
+              'highlightMode', ['off', 'letter', 'word', 'next word', 'next two words', 'next three words']
+            )}
+
+            ${renderToggleSetting(
+              'typed effect', 'fa-eye',
+              'Change how typed words are shown.',
+              'typedEffect', ['keep', 'hide', 'fade', 'dots']
+            )}
+
+            ${renderToggleSetting(
+              'tape mode', 'fa-tape',
+              'Only shows one line which scrolls horizontally. Setting this to \'word\' will make it scroll after every word.',
+              'tapeMode', ['off', 'letter', 'word']
+            )}
+
+            <!-- Tape Margin Input -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-center" data-title="tape margin">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-tape text-xs"></i><span>tape margin</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">When in tape mode, set the carets position from the left edge of the typing test as a percentage (for example, 50% centers it).</p>
+              </div>
+              <div class="md:col-span-5">
+                <input type="number" value="${settings.tapeMargin}" onchange="updateSetting('tapeMargin', this.value)" class="w-full mt-input" />
+              </div>
+            </div>
+
+            ${renderToggleSetting(
+              'smooth line scroll', 'fa-align-left',
+              'When enabled, the line transition will be animated.',
+              'smoothLineScroll', ['off', 'on']
+            )}
+
+            ${renderToggleSetting(
+              'show all lines', 'fa-align-left',
+              'When enabled, the website will show all lines for word, custom and quote mode tests - otherwise the lines will be limited to 3, and will automatically scroll.',
+              'showAllLines', ['off', 'on']
+            )}
+
+            ${renderToggleSetting(
+              'always show decimal places', 'fa-ellipsis',
+              'Always shows decimal places for values on the result page, without the need to hover over the stats.',
+              'alwaysShowDecimalPlaces', ['off', 'on']
+            )}
+
+            ${renderToggleSetting(
+              'typing speed unit', 'fa-gauge-high',
+              'Display typing speed in the specified unit.',
+              'typingSpeedUnit', ['wpm', 'cpm', 'wps', 'cps', 'wph']
+            )}
+
+            ${renderToggleSetting(
+              'start graphs at zero', 'fa-chart-line',
+              'Force graph axis to always start at zero, no matter what the data is. Turning this off may exaggerate the value changes.',
+              'startGraphsAtZero', ['off', 'on']
+            )}
+
+            <!-- Max Line Width -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-center" data-title="max line width">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-arrows-left-right-to-line text-xs"></i><span>max line width</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">Change the maximum width of the typing test, measured in characters. Setting this to 0 will align the words to the edges of the content area.</p>
+              </div>
+              <div class="md:col-span-5">
+                <input type="number" value="${settings.maxLineWidth}" onchange="updateSetting('maxLineWidth', this.value)" class="w-full mt-input" />
+              </div>
+            </div>
+
+            <!-- Font Size -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-center" data-title="font size">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-font text-xs"></i><span>font size</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">Change the font size of the test words.</p>
+              </div>
+              <div class="md:col-span-5">
+                <input type="number" step="0.5" min="1" max="4" value="${settings.fontSize}" onchange="updateSetting('fontSize', this.value)" class="w-full mt-input" />
+              </div>
+            </div>
+
+            <!-- Font Family 3-Column Grid (38 Fonts) -->
+            <div class="setting-row space-y-3" data-title="font family">
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+                <div class="md:col-span-7 space-y-1">
+                  <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-font text-xs"></i><span>font family</span></div>
+                  <p class="text-xs leading-relaxed" style="color: var(--text-color);">Change the font family used by the website. Using a local font will override your choice.</p>
+                </div>
+                <div class="md:col-span-5 flex flex-col items-center gap-1">
+                  <button onclick="showToast('Using system local font')" class="w-full mt-btn"><i class="fa-solid fa-file-import text-xs"></i><span>use local font</span></button>
+                  <span class="text-xs mt-sub">or</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                ${FONTS.map(f => `
+                  <button
+                    onclick="updateSetting('fontFamily', '${f}')"
+                    style="font-family: '${f}', monospace, sans-serif;"
+                    class="mt-btn ${settings.fontFamily === f ? 'active' : ''} truncate"
+                  >${f}</button>
+                `).join('')}
+              </div>
+            </div>
+
+            ${renderToggleSetting(
+              'keymap mode', 'fa-keyboard',
+              'Displays your current layout while taking a test. React shows what you pressed and Next shows what you need to press next.',
+              'keymapMode', ['off', 'static', 'react', 'next']
+            )}
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- SECTION 6: THEME (Matches 2148 - 2151)         -->
+        <!-- ============================================== -->
+        <div id="sec-theme" class="setting-section space-y-6">
+          <button onclick="toggleSectionCollapse('body-theme', this)" class="flex items-center gap-2.5 text-xl sm:text-2xl font-bold mt-sub hover:text-[var(--text-color)]">
+            <i class="fa-solid fa-chevron-down text-base transition-transform"></i>
+            <span>theme</span>
+          </button>
+
+          <div id="body-theme" class="space-y-6">
+            ${renderToggleSetting(
+              'flip test colors', 'fa-circle-half-stroke',
+              'By default, typed text is brighter than the future text. When enabled, the colors will be flipped and the future text will be brighter than the already typed text.',
+              'flipTestColors', ['off', 'on']
+            )}
+
+            ${renderToggleSetting(
+              'colorful mode', 'fa-fill-drip',
+              'When enabled, the test words will use the main color, instead of the text color, making the website more colorful.',
+              'colorfulMode', ['off', 'on']
+            )}
+
+            <!-- Custom Background -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-start" data-title="custom background">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-image text-xs"></i><span>custom background</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">Set an image url or local image to be a custom background image. Cover fits the image to cover the screen.</p>
+              </div>
+              <div class="md:col-span-5 space-y-2">
+                <button onclick="showToast('Select local background image')" class="w-full mt-btn"><i class="fa-solid fa-file-image text-xs"></i><span>use local image</span></button>
+                <div class="text-center text-xs mt-sub">or</div>
+                <input type="text" placeholder="image url" value="${settings.customBgUrl}" onchange="updateSetting('customBgUrl', this.value)" class="w-full mt-input" />
+                <div class="grid grid-cols-3 gap-2">
+                  ${['cover', 'contain', 'max'].map(sz => `
+                    <button onclick="updateSetting('customBgSize', '${sz}')" class="mt-btn ${settings.customBgSize === sz ? 'active' : ''}">${sz}</button>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+
+            ${renderToggleSetting(
+              'auto switch theme', 'fa-wand-magic-sparkles',
+              'Enabling this will automatically switch the theme between light and dark depending on the system theme.',
+              'autoSwitchTheme', ['off', 'on']
+            )}
+
+            ${renderToggleSetting(
+              'random theme', 'fa-shuffle',
+              'After completing a test, the theme will be set to a random one.',
+              'randomTheme', ['off', 'on', 'favorite', 'light', 'dark', 'custom', 'auto']
+            )}
+
+            <!-- Theme Preset / Custom + 2-Column Color-Coded Theme Grid -->
+            <div class="setting-row space-y-4" data-title="theme">
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+                <div class="md:col-span-7 space-y-1">
+                  <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-palette text-xs"></i><span>theme</span></div>
+                  <p class="text-xs leading-relaxed" style="color: var(--text-color);">Completely change the look and feel of the website by picking one of the presets, or by creating your own completely custom theme.</p>
+                </div>
+                <div class="md:col-span-5 grid grid-cols-2 gap-2">
+                  <button onclick="updateSetting('themeTab', 'preset')" class="mt-btn ${settings.themeTab === 'preset' ? 'active' : ''}">preset</button>
+                  <button onclick="updateSetting('themeTab', 'custom')" class="mt-btn ${settings.themeTab === 'custom' ? 'active' : ''}">custom</button>
+                </div>
+              </div>
+
+              <!-- 2-Column Color-Coded Preset Grid (Matches 2148 - 2151) -->
+              <div class="grid grid-cols-2 gap-2">
+                ${THEMES.map(t => {
+                  const isActive = settings.theme === t.name;
+                  return `
+                    <button
+                      onclick="updateSetting('theme', '${t.name}')"
+                      style="background-color: ${t.bg}; color: ${t.main}; border: 2px solid ${isActive ? '#e2b714' : 'transparent'};"
+                      class="rounded-lg py-2 px-3 text-xs font-medium flex items-center justify-between transition-transform hover:scale-[1.01] relative"
+                    >
+                      <span class="mx-auto truncate">${t.name}</span>
+                      ${isActive ? `
+                        <span class="flex items-center gap-1 shrink-0 ml-1">
+                          <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${t.main};"></span>
+                          <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${t.sub};"></span>
+                          <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${t.text};"></span>
+                        </span>
+                      ` : ''}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- SECTION 7: HIDE ELEMENTS (Matches 2152)        -->
+        <!-- ============================================== -->
+        <div id="sec-hide" class="setting-section space-y-6">
+          <button onclick="toggleSectionCollapse('body-hide', this)" class="flex items-center gap-2.5 text-xl sm:text-2xl font-bold mt-sub hover:text-[var(--text-color)]">
+            <i class="fa-solid fa-chevron-down text-base transition-transform"></i>
+            <span>hide elements</span>
+          </button>
+
+          <div id="body-hide" class="space-y-6">
+            ${renderToggleSetting(
+              'show key tips', 'fa-question',
+              'Shows the keybind tips at the bottom of the page.',
+              'showKeyTips', ['hide', 'show']
+            )}
+
+            ${renderToggleSetting(
+              'show out of focus warning', 'fa-exclamation',
+              'Shows an out of focus reminder after 1 second of being \'out of focus\' (not being able to type).',
+              'showOutOfFocusWarning', ['hide', 'show']
+            )}
+
+            ${renderToggleSetting(
+              'caps lock warning', 'fa-triangle-exclamation',
+              'Displays a warning when caps lock is on.',
+              'capsLockWarning', ['hide', 'show']
+            )}
+
+            ${renderToggleSetting(
+              'show average', 'fa-chart-simple',
+              'Displays your average speed and/or accuracy over the last 10 tests.',
+              'showAverage', ['off', 'speed', 'acc', 'both']
+            )}
+
+            ${renderToggleSetting(
+              'ads', 'fa-rectangle-ad',
+              'You can disable or enable ads at any time. "Result" will show one ad on the result page.',
+              'ads', ['off', 'result', 'on', 'sellout']
+            )}
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- SECTION 8: DANGER ZONE (Matches 2152)          -->
+        <!-- ============================================== -->
+        <div id="sec-danger" class="setting-section space-y-6">
+          <button onclick="toggleSectionCollapse('body-danger', this)" class="flex items-center gap-2.5 text-xl sm:text-2xl font-bold mt-sub hover:text-[var(--text-color)]">
+            <i class="fa-solid fa-chevron-down text-base transition-transform"></i>
+            <span>danger zone</span>
+          </button>
+
+          <div id="body-danger" class="space-y-6">
+            <!-- Import / Export Settings -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-center" data-title="import/export settings">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-sliders text-xs"></i><span>import/export settings</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">Import or export the settings as JSON.</p>
+              </div>
+              <div class="md:col-span-5 grid grid-cols-2 gap-2">
+                <button onclick="openJsonSettingsModal('import')" class="mt-btn">import</button>
+                <button onclick="openJsonSettingsModal('export')" class="mt-btn">export</button>
+              </div>
+            </div>
+
+            <!-- Update Cookie Preferences -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-center" data-title="update cookie preferences">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-cookie-bite text-xs"></i><span>update cookie preferences</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">If you changed your mind about which cookies you consent to, you can change your preferences here.</p>
+              </div>
+              <div class="md:col-span-5">
+                <button onclick="showToast('Cookie preferences saved')" class="w-full mt-btn">open</button>
+              </div>
+            </div>
+
+            <!-- The Rest -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-center" data-title="the rest">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-bars text-xs"></i><span>the rest</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">Niche settings that only affect minor functionality. Most people will never need to touch these.</p>
+              </div>
+              <div class="md:col-span-5">
+                <button onclick="openCommandLine()" class="w-full mt-btn">open</button>
+              </div>
+            </div>
+
+            <!-- Reset Settings -->
+            <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-center" data-title="reset settings">
+              <div class="md:col-span-7 space-y-1">
+                <div class="text-sm font-medium mt-sub flex items-center gap-2"><i class="fa-solid fa-rotate-left text-xs"></i><span>reset settings</span></div>
+                <p class="text-xs leading-relaxed" style="color: var(--text-color);">
+                  Resets settings to the default (but doesn't touch your tags and presets).<br>
+                  <span style="color: var(--error-color);">You can't undo this!</span>
+                </p>
+              </div>
+              <div class="md:col-span-5">
+                <button onclick="resetAllSettings()" class="w-full rounded-lg py-2.5 px-4 text-xs font-semibold transition-opacity hover:opacity-90" style="background-color: var(--error-color); color: #ffffff;">
+                  reset settings
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderToggleSetting(title, icon, desc, key, options) {
+      const cols = options.length === 2 ? 'grid-cols-2' : (options.length === 4 ? 'grid-cols-4' : 'grid-cols-3');
+      return `
+        <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-start" data-title="${title}">
+          <div class="md:col-span-7 space-y-1">
+            <div class="text-sm font-medium mt-sub flex items-center gap-2">
+              <i class="fa-solid ${icon} text-xs"></i><span>${title}</span>
+            </div>
+            <p class="text-xs leading-relaxed" style="color: var(--text-color);">${desc}</p>
+          </div>
+          <div class="md:col-span-5 grid ${cols} gap-2 w-full">
+            ${options.map(opt => `
+              <button
+                onclick="updateSetting('${key}', '${opt}')"
+                class="mt-btn ${String(settings[key]) === String(opt) ? 'active' : ''}"
+              >${opt}</button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderNumberAndToggleSetting(title, icon, desc, numKey, toggleKey, options) {
+      const cols = options.length === 2 ? 'grid-cols-2' : 'grid-cols-3';
+      return `
+        <div class="setting-row grid grid-cols-1 md:grid-cols-12 gap-3 items-start" data-title="${title}">
+          <div class="md:col-span-7 space-y-1">
+            <div class="text-sm font-medium mt-sub flex items-center gap-2">
+              <i class="fa-solid ${icon} text-xs"></i><span>${title}</span>
+            </div>
+            <p class="text-xs leading-relaxed" style="color: var(--text-color);">${desc}</p>
+          </div>
+          <div class="md:col-span-5 space-y-2 w-full">
+            <input
+              type="number"
+              value="${settings[numKey]}"
+              onchange="updateSetting('${numKey}', this.value)"
+              class="w-full mt-input"
+            />
+            <div class="grid ${cols} gap-2">
+              ${options.map(opt => `
+                <button
+                  onclick="updateSetting('${toggleKey}', '${opt}')"
+                  class="mt-btn ${String(settings[toggleKey]) === String(opt) ? 'active' : ''}"
+                >${opt}</button>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateSetting(key, value, regenerateTest = false) {
+      settings[key] = value;
+      saveSettings();
+      buildSettingsPage();
+      if (regenerateTest) restartTest();
+    }
+
+    function toggleFunbox(mode) {
+      settings.funbox = settings.funbox === mode ? 'none' : mode;
+      saveSettings();
+      buildSettingsPage();
+      restartTest();
+    }
+
+    function selectClickSound(snd) {
+      settings.playSoundOnClick = snd;
+      saveSettings();
+      buildSettingsPage();
+      playSynthesizedSound(snd, false);
+    }
+
+    function toggleSectionCollapse(bodyId, btn) {
+      const body = document.getElementById(bodyId);
+      const icon = btn.querySelector('i');
+      if (body) {
+        body.classList.toggle('hidden');
+        icon.classList.toggle('-rotate-90');
+      }
+    }
+
+    function filterSettingsOnPage(query) {
+      const q = query.trim().toLowerCase();
+      document.querySelectorAll('.setting-row').forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.classList.toggle('hidden', q.length > 0 && !text.includes(q));
+      });
+    }
+
+    function resetAllSettings() {
+      settings = { ...DEFAULT_SETTINGS };
+      saveSettings();
+      buildSettingsPage();
+      restartTest();
+      showToast('All settings reset to default (serika dark)');
+    }
+
+    /**************************************************************
+     * 11. VIEW ROUTING, COMMAND LINE & MODALS
+     **************************************************************/
+    function switchView(view) {
+      const isTest = view === 'test';
+      document.getElementById('testView').classList.toggle('hidden', !isTest);
+      document.getElementById('testView').classList.toggle('flex', isTest);
+      document.getElementById('settingsView').classList.toggle('hidden', isTest);
+      document.getElementById('settingsView').classList.toggle('flex', !isTest);
+
+      document.getElementById('navTestBtn').style.color = isTest ? 'var(--main-color)' : '';
+      document.getElementById('navSettingsBtn').style.color = !isTest ? 'var(--main-color)' : '';
+
+      if (isTest) {
+        setTimeout(() => {
+          updateCaretPosition();
+          focusTypingInput();
+        }, 50);
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function openCommandLine(prefill = '') {
+      const modal = document.getElementById('commandLineModal');
+      const input = document.getElementById('cmdSearchInput');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      input.value = prefill;
+      renderCommandLineList(prefill);
+      setTimeout(() => input.focus(), 30);
+    }
+
+    function closeCommandLine() {
+      const modal = document.getElementById('commandLineModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      focusTypingInput();
+    }
+
+    function renderCommandLineList(query = '') {
+      const q = query.trim().toLowerCase();
+      const listEl = document.getElementById('cmdResultsList');
+      const commands = [];
+
+      // Quick actions
+      commands.push({ label: ' Navigation: Go to Typing Test', action: () => { switchView('test'); closeCommandLine(); } });
+      commands.push({ label: ' Navigation: Go to Settings (/settings)', action: () => { switchView('settings'); closeCommandLine(); } });
+      commands.push({ label: ' Action: Restart Test', action: () => { restartTest(); closeCommandLine(); } });
+
+      // Themes
+      THEMES.forEach(t => {
+        commands.push({
+          label: `Theme: ${t.name}`,
+          badge: settings.theme === t.name ? 'active' : '',
+          action: () => { updateSetting('theme', t.name); closeCommandLine(); showToast(`Theme set to ${t.name}`); }
+        });
+      });
+
+      // Sounds
+      CLICK_SOUNDS.forEach(s => {
+        commands.push({
+          label: `Sound on click: ${s}`,
+          badge: settings.playSoundOnClick === s ? 'active' : '',
+          action: () => { selectClickSound(s); closeCommandLine(); showToast(`Sound set to ${s}`); }
+        });
+      });
+
+      // Languages
+      ['english', 'spanish', 'french', 'german', 'hindi'].forEach(l => {
+        commands.push({
+          label: `Language: ${l}`,
+          badge: settings.language === l ? 'active' : '',
+          action: () => { updateSetting('language', l, true); closeCommandLine(); showToast(`Language set to ${l}`); }
+        });
+      });
+
+      // Funbox
+      FUNBOX_MODES.forEach(fb => {
+        commands.push({
+          label: `Funbox: ${fb}`,
+          badge: settings.funbox === fb ? 'active' : '',
+          action: () => { toggleFunbox(fb); closeCommandLine(); showToast(`Funbox: ${settings.funbox}`); }
+        });
+      });
+
+      const filtered = commands.filter(c => c.label.toLowerCase().includes(q)).slice(0, 35);
+      listEl.innerHTML = filtered.map((cmd, idx) => `
+        <button
+          onclick="window._cmdActions[${idx}]()"
+          class="w-full px-4 py-2.5 text-left flex items-center justify-between hover:bg-white/5 transition-colors"
+        >
+          <span style="color: var(--text-color);">${cmd.label}</span>
+          ${cmd.badge ? `<span class="text-[10px] px-2 py-0.5 rounded font-bold" style="background-color: var(--main-color); color: var(--bg-color);">${cmd.badge}</span>` : ''}
+        </button>
+      `).join('');
+
+      window._cmdActions = filtered.map(c => c.action);
+    }
+
+    function openModal(id) {
+      const m = document.getElementById(id);
+      if (m) { m.classList.remove('hidden'); m.classList.add('flex'); }
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+    }
+
+    function openJsonSettingsModal(mode) {
+      const area = document.getElementById('jsonModalTextarea');
+      document.getElementById('jsonModalTitle').textContent = mode === 'export' ? 'Export Settings JSON' : 'Import Settings JSON';
+      area.value = JSON.stringify(settings, null, 2);
+      openModal('jsonModal');
+    }
+
+    function applyImportedJson() {
+      try {
+        const parsed = JSON.parse(document.getElementById('jsonModalTextarea').value);
+        settings = { ...DEFAULT_SETTINGS, ...parsed };
+        saveSettings();
+        buildSettingsPage();
+        closeModal('jsonModal');
+        showToast('Settings JSON applied & copied!');
+      } catch (err) {
+        showToast('Invalid JSON format');
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toastNotice');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => t.classList.add('hidden'), 2400);
+    }
+
+    /**************************************************************
+     * 12. REACTIVE KEYMAP BUILDER
+     **************************************************************/
+    function buildKeymapDOM() {
+      const r1 = 'qwertyuiop'.split('');
+      const r2 = 'asdfghjkl'.split('');
+      const r3 = 'zxcvbnm'.split('');
+
+      const renderRow = (arr, id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = arr.map(k => `
+          <div id="km-key-${k}" class="w-7 h-7 sm:w-8 sm:h-8 rounded mt-sub-alt flex items-center justify-center text-xs mt-sub transition-colors">${k}</div>
+        `).join('');
+      };
+      renderRow(r1, 'keymapRow1');
+      renderRow(r2, 'keymapRow2');
+      renderRow(r3, 'keymapRow3');
+    }
+
+    function highlightKeymapKey(char) {
+      if (settings.keymapMode === 'off') return;
+      const k = char.toLowerCase();
+      const keyEl = document.getElementById(`km-key-${k}`);
+      if (keyEl) {
+        keyEl.style.backgroundColor = 'var(--main-color)';
+        keyEl.style.color = 'var(--bg-color)';
+        setTimeout(() => {
+          keyEl.style.backgroundColor = '';
+          keyEl.style.color = '';
+        }, 140);
+      }
+    }
+
+    /**************************************************************
+     * 13. INITIALIZE ON WINDOW LOAD
+     **************************************************************/
+    window.onload = function () {
+      buildKeymapDOM();
+      buildSettingsPage();
+      applyVisualSettings();
+      setupTypingListeners();
+      restartTest();
+      window.addEventListener('resize', updateCaretPosition);
+    };
+  </script>
+</body>
+</html>
